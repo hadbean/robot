@@ -1,5 +1,10 @@
 package config;
 
+import constant.CardType;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class Config {
 
     /**
@@ -49,10 +54,29 @@ public class Config {
 
 
     public static final double FOOL_ACTION = 0.05;
-    public static final String FOOL_ACTION_EXP = "玩家不考虑手牌，随意出牌";
+    public static final String FOOL_ACTION_EXP = "玩家犯傻概率，随意出牌";
 
     public static final double SMALL_CARD = 0.7;
     public static final String SMALL_CARD_EXP = "牌多小时算小牌";
+
+
+    public static final Map<CardType,Double> SMALL_CARD_MAP = new HashMap<>();
+    public static final Map<CardType,Double> SMALL_CARD_MAP_EXP = new HashMap<>();
+    static {
+        SMALL_CARD_MAP.put(CardType.FEIJI, 0.6);
+        SMALL_CARD_MAP.put(CardType.FEIJIWITHTAIL, 0.65);
+        SMALL_CARD_MAP.put(CardType.ZHADAN, 0.65);
+        SMALL_CARD_MAP.put(CardType.ZHADANWITHTAIL, 0.65);
+        SMALL_CARD_MAP.put(CardType.DAN, 0.85);
+        SMALL_CARD_MAP.put(CardType.DUI, 0.80);
+        SMALL_CARD_MAP.put(CardType.SANTIAOWITHTAIL, 0.80);
+        SMALL_CARD_MAP.put(CardType.SANTIAO, 0.80);
+        SMALL_CARD_MAP.put(CardType.LIANDUI, 0.60);
+        SMALL_CARD_MAP.put(CardType.SHUNZI, 0.85);
+        SMALL_CARD_MAP.put(CardType.HUOJIAN, 0d);
+
+    }
+
 
 
 

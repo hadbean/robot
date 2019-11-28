@@ -1,5 +1,6 @@
 package utils;
 
+import constant.CardType;
 import model.CardArray;
 import model.OutCard;
 import model.Player;
@@ -51,21 +52,24 @@ public class Room {
         CardSplit split = new CardSplit();
         OutCard outCard = null;
         int round = 0;
-        String cardStr = cardDesc(players[0],null)+"\n" +cardDesc(players[1],null)+"\n" +cardDesc(players[2],null)+"\n";
-
-        Player p = players[round % 3];
-        outCard = p.out(round / 3, remainingCardNum, alreadyOutCards, outCard);
-        System.out.println(cardDesc(p, outCard));
-        Strategy.removeCard(p.getCards(), alreadyOutCards, outCard, true);
-        remainingCardNum[p.getRole()] -= outCard.getLength();
-        round++;
-
+        String cardStr = cardDesc(players[0], null) + "\n" + cardDesc(players[1], null) + "\n" + cardDesc(players[2], null) + "\n";
         try {
+            Player p = players[round % 3];
+            outCard = p.out(round / 3, remainingCardNum, alreadyOutCards, outCard);
+            if (outCard.getType() == CardType.ZHADAN){
+                throw new RuntimeException("出牌混乱");
+            }
+            System.out.println(cardDesc(p, outCard));
+            Strategy.removeCard(p.getCards(), alreadyOutCards, outCard, true);
+            remainingCardNum[p.getRole()] -= outCard.getLength();
+            round++;
+
+
             while (true) {
                 p = players[round % 3];
                 if (!debug) {
                     OutCard tmp0 = p.out(round / 3, remainingCardNum, alreadyOutCards, outCard);
-                    System.out.print("准备出牌：" + cardDesc(p, tmp0));
+                    System.out.print((round / 3) +"准备出牌：" + cardDesc(p, tmp0));
 
                     split.setRound(round / 3);
                     CardArray rs = split.split(p.getCards());
@@ -82,11 +86,17 @@ public class Room {
                     remainingCardNum[p.getRole()] -= outCard.getLength();
                     Strategy.removeCard(p.getCards(), alreadyOutCards, outCard, true);
                     outCard.setRole(p.getRole());
+                    for (int i : p.getCards()) {
+                        if (i < 0){
+                            throw new RuntimeException("出牌异常1");
+                        }
+                    }
                 }
                 if (round / 3 > 20) {
 
                 }
                 round++;
+
                 if (isOver(p.getCards())) {
                     System.out.println(p.getRole() + "号玩家获胜");
 
@@ -100,22 +110,22 @@ public class Room {
                     }
                     int n = 0;
                     for (int i = 0; i < remainingCardNum.length; i++) {
-                        if (remainingCardNum[i] < 0){
+                        if (remainingCardNum[i] < 0) {
                             throw new RuntimeException("牌的数量统计错误:" + OutCard.POKE[i]);
                         }
-                        if (remainingCardNum[i] == 0){
+                        if (remainingCardNum[i] == 0) {
                             n++;
                         }
 
                     }
-                    if (n != 1){
+                    if (n != 1) {
                         throw new RuntimeException("牌的数量统计错误");
                     }
 
                     return p.getRole();
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
             System.out.println(cardStr);
             throw e;
@@ -141,7 +151,7 @@ public class Room {
         if (out == null) {
             sb.append("\t").append("PASS");
         } else {
-            sb.append("\t").append((out.getMode() == null?"":"<"+out.getMode()+">") +out.getType() + ":" + out.toString()  +" ");
+            sb.append("\t").append((out.getMode() == null ? "" : "<" + out.getMode() + ">") + out.getType() + ":" + out.toString() + " ");
         }
         return sb.toString();
     }
@@ -159,7 +169,7 @@ public class Room {
 
         int[] wins = new int[3];
         Room room = new Room();
-        int i = 1000;
+        int i = 10000;
         while (i > 0) {
             room.init();
             wins[room.play(true)] += 1;

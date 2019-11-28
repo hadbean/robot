@@ -90,7 +90,7 @@ public class CardSplit {
                     cards[i - j] -= 1;
                 }
                 rs.nShunzi++;
-                i = i - n + 1;
+                i = i - n - 1;
                 n = 0;
                 m++;
             } else {
@@ -154,7 +154,7 @@ public class CardSplit {
             }
             //合并顺子
             if (rs.nShunzi > 1) {
-                ShunziSplit.merge(rs.shunzi);
+                ShunziSplit.merge(rs);
             }
         }
         //找出对子和单
@@ -174,15 +174,25 @@ public class CardSplit {
         //分裂飞机,4 变成 2,好带牌
         for (int i = 0; i < rs.nFeiji; i++) {
             if (rs.feiji[i][1] == 4){
-                rs.nFeiji++;
                 rs.feiji[rs.nFeiji][0] = rs.feiji[i][0];
                 rs.feiji[rs.nFeiji][1] = 2;
                 rs.feiji[i][0] = rs.feiji[i][0] - 2;
                 rs.feiji[i][1] = rs.feiji[i][1] - 2;
+                rs.nFeiji++;
                 break;
             }
         }
+        for (int i : cards) {
+            if (i != 0){
+                throw new RuntimeException("分牌异常");
+            }
+        }
+
         return rs;
+    }
+
+    private void check(){
+
     }
 
     private void splitShunzi(CardArray rs, int[] cards, final int m) {
@@ -201,7 +211,6 @@ public class CardSplit {
                 for (int j = shunzi[0] - shunzi[1] + 2; j < shunzi[0]; j++) {
                     if (cards[j] > 0) {
                         n++;
-                        idx = j;
                     } else {
                         if (n > max) {
                             max = n;
@@ -326,6 +335,15 @@ public class CardSplit {
         }
 
         if (flag){
+            int[][] newSHunzi = new int[rs.nShunzi*2][2];
+            int k = 0;
+            for (int i = 0; i < rs.shunzi.length; i++) {
+                if (rs.shunzi[i][0] > 0){
+                    newSHunzi[k] = rs.shunzi[i];
+                    k++;
+                }
+            }
+            rs.shunzi = newSHunzi;
             splitShunzi(rs,cards,rs.nShunzi);
         }
 

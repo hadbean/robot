@@ -18,16 +18,28 @@ public class PlayTest {
     public static void main(String[] args) {
 
         /*
-        地主:3,3,4,4,5,6,6,6,7,7,7,8,8,9,10,Q,Q,Q,2,2,	FEIJIWITHTAIL:6,6,6,7,7,7,5,9,
-准备出牌：地主下:3,4,5,6,7,8,8,9,9,10,10,J,Q,K,A,2,JOKER1,	PASS
-地主下:3,4,5,6,7,8,8,9,9,10,10,J,Q,K,A,2,JOKER1,	PASS
-准备出牌：地主上:3,4,5,5,9,10,J,J,J,K,K,K,A,A,A,2,JOKER2,	FEIJIWITHTAIL:K,K,K,A,A,A,3,4,
-地主上:3,4,5,5,9,10,J,J,J,K,K,K,A,A,A,2,JOKER2,	FEIJIWITHTAIL:K,K,K,A,A,A,3,4,
+        地主:3,3,3,4,4,5,5,6,6,7,7,7,9,10,J,Q,Q,K,2,2,	PASS
+主下:3,4,4,5,8,8,9,10,10,J,J,Q,A,A,A,2,JOKER1,	PASS
+主上:5,6,6,7,8,8,9,9,10,J,Q,K,K,K,A,2,JOKER2,	PASS
          */
+        String s0 = "3,3,3,4,6,6,7,7,8,8,9,10,10,10,J,Q,Q,A,A,2";
+        String s1 = "3,5,5,6,7,9,9,J,J,K,K,K,2,2,2,JOKER1,JOKER2";
+        String s2 = "4,4,4,5,5,6,7,8,8,9,10,J,Q,Q,K,A,A";
 
-        String s0 = "3,4,5,6,6,7,8,10,10,10,J,J,J,Q,Q,A,A,A,2,2";
-        String s1 = "3,3,3,4,4,5,6,7,8,8,9,J,K,K,A,2,JOKER1";
-        String s2 = "4,5,5,6,7,7,8,9,9,9,10,Q,Q,K,K,2,JOKER2";
+        String s = "地主:3,4,5,5,7,7,9,10,10,10,10,J,Q,Q,K,K,K,K,A,2,\tPASS\n" +
+                "主下:3,3,4,4,5,5,6,7,7,8,9,9,J,J,A,2,2,\tPASS\n" +
+                "主上:3,4,6,6,6,8,8,8,9,J,Q,Q,A,A,2,JOKER1,JOKER2,\tPASS";
+        String[] ss = s.split("\n");
+        if (ss.length == 3) {
+            for (int i = 0; i < s.split("\n").length; i++) {
+                String t = ss[i];
+                t = t.substring(t.indexOf(":") + 1, t.indexOf(",\t"));
+                ss[i] = t;
+            }
+            s0 = ss[0];
+            s1 = ss[1];
+            s2 = ss[2];
+        }
 
         
         int[] c0 = strToCard(s0);

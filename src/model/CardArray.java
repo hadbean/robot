@@ -4,7 +4,7 @@ import config.Config;
 
 public class CardArray {
 
-    public static int[] P = {6, 6, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
+    public static int[] P = {6, 6, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2};
     public int[] cards;
     public int round;
     private int usage;
@@ -12,29 +12,29 @@ public class CardArray {
 
     public int[] huojian = new int[1];
     public int nHuojian;
-    public int[] zhadan = new int[5];
+    public int[] zhadan = new int[9];
     public int nZhadan;
 
     public int[] er = new int[1];
     public int nEr;
 
-    public int[][] feiji = new int[3][2];
+    public int[][] feiji = new int[6][2];
     public int nFeiji;
 
-    public int[][] shunzi = new int[4][2];
+    public int[][] shunzi = new int[8][2];
     public int nShunzi;
 
-    public int[][] liandui = new int[3][2];
+    public int[][] liandui = new int[6][2];
     public int nLiandui;
 
-    public int[] santiao = new int[6];
+    public int[] santiao = new int[10];
     public int nSantiao;
 
 
     public int[] dan = new int[15];
     public int nDan;
 
-    public int[] duizi = new int[10];
+    public int[] duizi = new int[12];
     public int nDuizi;
 
 
@@ -54,9 +54,9 @@ public class CardArray {
             int k = duizi[i] - Config.REF;
             if (k > 0) {
                 k = 3 * k / 2;
-                if (duizi[i] < Config.MIN_CARD_IGNORE) {
-                    N++;
-                }
+            }
+            if (duizi[i] < Config.MIN_CARD_IGNORE) {
+                N++;
             }
             s += k;
         }

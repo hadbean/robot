@@ -3,6 +3,7 @@ package strategy;
 import config.Config;
 import constant.CardType;
 import model.CardArray;
+import model.CardGraph;
 import model.OutCard;
 
 import java.util.ArrayList;
@@ -73,6 +74,8 @@ public class OutCardStrategy implements Strategy {
                     }
                 } else if (cards.nShunzi == 1) {
                     outCard = OutCard.shunzi(cards.shunzi[0]);
+                } else if (cards.nSantiao == 1 && cards.nEr == 2){
+                    outCard = OutCard.santiaoWithTail(cards.santiao[0], new int[]{12, 12});
                 }
                 break;
             }
@@ -89,7 +92,7 @@ public class OutCardStrategy implements Strategy {
                 }
             } else if (cards.nLiandui == 1) {
                 if (cards.liandui[0][1] * 2 == remainCardNum) {
-                    outCard = OutCard.liandui(cards.shunzi[0]);
+                    outCard = OutCard.liandui(cards.liandui[0]);
                 }
             } else if (cards.nFeiji > 0) {
                 boolean flag = false;
@@ -125,8 +128,10 @@ public class OutCardStrategy implements Strategy {
             } else if (cards.nZhadan == 1) {
                 if (remainCardNum == 6) {
                     if (cards.nDan == 2) {
-                        outCard = OutCard.zhadanWithTail(cards.zhadan[0], cards.dan);
-                    } else {
+                        outCard = OutCard.zhadanWithTail(cards.zhadan[0], new int[]{cards.dan[0], cards.dan[1]});
+                    } else if (cards.nHuojian == 1){
+                        outCard = OutCard.zhadan(cards.zhadan[0]);
+                    }else {
                         if (cards.nEr == 2) {
                             outCard = OutCard.zhadanWithTail(cards.zhadan[0], new int[]{12, 12});
                         } else {
@@ -140,6 +145,8 @@ public class OutCardStrategy implements Strategy {
                         outCard = OutCard.zhadanWithTail(cards.zhadan[0], new int[]{cards.duizi[0], cards.duizi[0], 12, 12});
                     }
                 }
+            }else if (cards.nZhadan == 2 && remainCardNum == 8) {
+                return OutCard.zhadan(cards.zhadan[0]);
             }
         }
 
@@ -184,7 +191,7 @@ public class OutCardStrategy implements Strategy {
     public OutCard letFriend(int[] cards) {
         for (int i = 0; i < 7; i++) {
             if (cards[i] > 0) {
-                return OutCard.dan(cards[i]);
+                return OutCard.dan(i);
             }
         }
         return null;
@@ -265,7 +272,7 @@ public class OutCardStrategy implements Strategy {
                         if (cards.dan[1] < cards.duizi[0]) {
                             tail[0] = cards.dan[0];
                             tail[1] = cards.dan[1];
-                            tail[3] = cards.duizi[0];
+                            tail[2] = cards.duizi[0];
                         } else {
                             tail[0] = cards.dan[0];
                             tail[1] = cards.duizi[0];
@@ -340,12 +347,12 @@ public class OutCardStrategy implements Strategy {
 
     /**
      * @param cards
-     * @param posion 1 地主下家 2 地主上家
+     * @param role 1 地主下家 2 地主上家
      * @return 0 出其它 1 出单
      */
-    public OutCard enemyLastOne(CardArray cards, int posion, int[] remainCardNum) {
+    public OutCard enemyLastOne(CardArray cards, int role, int[] remainCardNum) {
 
-        if (posion == 1) {
+        if (role == 1) {
             if (remainCardNum[2] == 2 && cards.nDuizi > 0) {
                 return OutCard.duizi(cards.duizi[0]);
             }
@@ -354,7 +361,7 @@ public class OutCardStrategy implements Strategy {
                 return OutCard.dan(cards.dan[1]);
             }
             return null;
-        } else if (posion == 2) {
+        } else if (role == 2) {
             if (cards.nDuizi > 0) {
                 return OutCard.duizi(cards.duizi[0]);
             } else {
@@ -372,7 +379,7 @@ public class OutCardStrategy implements Strategy {
             outs.add(OutCard.dan(cards.dan[0]));
         }
         if (cards.nDuizi > 0) {
-            outs.add(OutCard.dan(cards.duizi[0]));
+            outs.add(OutCard.duizi(cards.duizi[0]));
         }
         if (cards.nSantiao > 0) {
             if (cards.nDan > 0 && cards.nDuizi > 0) {

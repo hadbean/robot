@@ -1,5 +1,7 @@
 package utils;
 
+import model.CardArray;
+
 public class ShunziSplit {
 
 
@@ -24,7 +26,7 @@ public class ShunziSplit {
         for (int i = 0; i < m; i++) {
             int[] shunzi = shunzis[i];
             for (int j = 0; j < cards.length - 3; j++) {
-                if (cards[j] > 0&&(shunzi[0] - shunzi[1] == j || shunzi[0] == j - 1)){
+                if (cards[j] > 0 && (shunzi[0] - shunzi[1] == j || shunzi[0] == j - 1)) {
                     cards[j] -= 1;
                     shunzi[1] = shunzi[1] + 1;
                     if (shunzi[0] == j - 1) {
@@ -127,47 +129,72 @@ public class ShunziSplit {
         return b - a;
     }
 
-    public static void prolong(int[][] shunzis, int[] cards){
+    public static void prolong(int[][] shunzis, int[] cards) {
         for (int i = 0; i < shunzis.length; i++) {
             int[] shunzi = shunzis[i];
 
-            if (shunzi[0] == 0 || shunzi[0] - shunzi[1] > 5){
+            if (shunzi[0] == 0 || shunzi[0] - shunzi[1] > 5) {
                 continue;
             }
-            if (shunzi[0] < 7 && cards[shunzi[0] + 1] == 2){
+            if (shunzi[0] < 7 && cards[shunzi[0] + 1] == 2) {
                 cards[shunzi[0] + 1] -= 1;
                 shunzi[0] += 1;
                 shunzi[1] += 1;
             }
-            if (shunzi[0] - shunzi[1] > 0 && cards[shunzi[0] - shunzi[1]] == 2){
+            if (shunzi[0] - shunzi[1] > 0 && cards[shunzi[0] - shunzi[1]] == 2) {
                 cards[shunzi[0] - shunzi[1]] -= 1;
                 shunzi[1] += 1;
             }
         }
     }
 
-    public static void merge(int[][] shunzis){
-        for (int i = 0; i < shunzis.length - 1; i++) {
-            int[] shunzi1 =shunzis[i];
-            if (shunzi1[0] == 0){
+    public static void merge(CardArray rs) {
+        boolean flag = false;
+        for (int i = 0; i < rs.nShunzi; i++) {
+            int[] shunzi1 = rs.shunzi[i];
+            if (shunzi1[0] == 0) {
                 continue;
             }
-            for (int j = i+1; j < shunzis.length; j++) {
-                int[] shunzi2 =shunzis[j];
-                if (shunzi2[0] == 0){
+            for (int j = i + 1; j < rs.nShunzi; j++) {
+                int[] shunzi2 = rs.shunzi[j];
+                if (shunzi2[0] == 0) {
                     continue;
                 }
-                if (shunzi1[0] == shunzi2[0] - shunzi2[1]){
+                if (shunzi1[0] == shunzi2[0] - shunzi2[1]) {
                     shunzi1[0] = shunzi2[0];
                     shunzi1[1] += shunzi2[1];
                     shunzi2[0] = 0;
                     shunzi2[1] = 0;
-                } else if (shunzi2[0] == shunzi1[0] - shunzi1[1]){
+                    rs.nShunzi -- ;
+                    flag = true;
+                } else if (shunzi2[0] == shunzi1[0] - shunzi1[1]) {
                     shunzi1[1] += shunzi2[1];
                     shunzi2[0] = 0;
                     shunzi2[1] = 0;
+                    rs.nShunzi --;
+                    flag = true;
+                } else if (shunzi1[0] == shunzi2[0] && shunzi1[1] == shunzi2[1]){
+                    rs.liandui[rs.nLiandui][0] = shunzi1[0];
+                    rs.liandui[rs.nLiandui][1] = shunzi1[1];
+                    shunzi1[0] = 0;
+                    shunzi2[0] = 0;
+                    rs.nLiandui++;
+                    rs.nShunzi -= 2;
+                    flag = true;
                 }
             }
+        }
+        if (flag){
+            int[][] newSHunzi = new int[rs.nShunzi][2];
+            int k = 0;
+            for (int i = 0; i < rs.shunzi.length; i++) {
+                if (rs.shunzi[i][0] > 0){
+                    newSHunzi[k] = rs.shunzi[i];
+                    k++;
+                }
+            }
+            rs.shunzi = newSHunzi;
+            merge(rs);
         }
     }
 }

@@ -236,8 +236,12 @@ public class OutCard {
     }
 
     public static void main(String[] args) {
-        OutCard card = new OutCard(new int[]{9,6},CardType.SHUNZI);
-        System.out.println(card);
+        System.out.println(OutCard.feijiWithTail(new int[]{5,2},new int[]{0,0,1,1}));
+        System.out.println(OutCard.shunzi(new int[]{5,5}));
+        System.out.println(OutCard.dan(1));
+        System.out.println(OutCard.duizi(1));
+        System.out.println(OutCard.liandui(new int[]{5,5}));
+        System.out.println(OutCard.huojian());
     }
 
 

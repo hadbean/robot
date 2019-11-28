@@ -27,17 +27,15 @@ public class Player {
     //主动出牌
 
     /**
-     *
-     * @param round 第几圈
+     * @param round            第几圈
      * @param remainingCardNum 每个玩家剩余手牌数量
-     * @param alreadyOutCards 全局已经出的牌
-     * @param outCard 出的牌，最近出的牌，不包含PASS
+     * @param alreadyOutCards  全局已经出的牌
+     * @param outCard          出的牌，最近出的牌，不包含PASS
      * @return
      */
     public OutCard out(int round, int[] remainingCardNum, int[] alreadyOutCards, OutCard outCard) {
 
         CardArray rs = new CardSplit().split(cards);
-        rs.cards = cards;
         if (outCard != null && outCard.getRole() != role) {
             return receive(round, remainingCardNum, alreadyOutCards, outCard);
         }
@@ -51,7 +49,6 @@ public class Player {
         int[] remainingCards = strategy.remainingCardsExceptMe(cards, alreadyOutCards);
 
         if (out != null) {
-            System.out.println("oneHand");
             //在能一手出完的情况下，判断炸弹带牌是否要出
             if (out.getType() == CardType.ZHADANWITHTAIL) {
                 if (strategy.canBiggerThanMe(out.getCards(), CardType.ZHADAN, remainingCards, emeryCarNum) == 1) {
@@ -75,7 +72,7 @@ public class Player {
         }
 
         //判断是否只剩下一手小牌，那么先出大牌
-        out = strategy.allBig(role, rs, remainingCards, emeryCarNum);
+        out = strategy.allBig2(role, cards, remainingCards, remainingCardNum);
         if (out != null) {
             out.setMode("allBig");
             return out;
@@ -89,12 +86,12 @@ public class Player {
                     out = OutCard.duizi(rs.duizi[0]);
                 }
             }
-            if (out != null){
+            if (out != null) {
                 out.setMode("forceEnemySingle");
                 return out;
             }
         }
-        //判断是否让队友过牌,如果队友是我下家，且只剩一张牌，不用考虑自己牌型，直接顶大
+        //判断是否让队友过牌,如果队友是我下家，且只剩一张牌，不用考虑自己牌型，直接让他过
         if (role == 1 && remainingCardNum[2] == 1) {
             for (int i = 0; i <= 7; i++) {
                 if (cards[i] > 0) {
@@ -162,7 +159,7 @@ public class Player {
 
         int[] remainCards = strategy.remainingCardsExceptMe(cards, alreadyOutCards);
 
-        out = strategy.jieAndWin(role, cards, remainCards, outs, emeryCardNum);
+        out = strategy.jieAndWin(role, cards, remainCards, outs, remainingCardNum);
 
         if (out != null) {
             out.setMode("jieAndWin");
