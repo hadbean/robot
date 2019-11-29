@@ -131,6 +131,30 @@ public interface Strategy {
         System.arraycopy(cards, 0, tmpCards, 0, cards.length);
 
         CardArray arr = split.split(tmpCards);
+        if (arr.nFeiji > 0) {
+            for (int i = 0; i < arr.nFeiji; i++) {
+                OutCard o = OutCard.feiji(arr.feiji[i]);
+                removeCard(arr.cards, EMPTY_CARDS, o, true);
+                if (findTail(arr.cards, o, 1, arr.feiji[i][1], false) || findTail(arr.cards, o, 2, arr.feiji[i][1], false)) {
+                    o.setType(CardType.FEIJIWITHTAIL);
+                    removeFrom(o.getTail(),arr.cards,true);
+                }
+                double bp = biggestProbability(role, remainCards, remainCardNum, o);
+                o.setBp(bp);
+                if (bp < Config.SMALL_CARD_MAP.get(o.getType())) {
+                    n++;
+                    small.add(o);
+                    if (n > 2) {
+                        return null;
+                    }
+                } else if (out == null) {
+                    out = o;
+                }
+
+            }
+            arr.nFeiji = 0;
+        }
+        arr = split.split(arr.cards);
         if (arr.nShunzi > 0) {
             for (int i = 0; i < arr.nShunzi; i++) {
                 OutCard o = OutCard.shunzi(arr.shunzi[i]);
@@ -153,7 +177,24 @@ public interface Strategy {
         if (arr.nSantiao > 0) {
             for (int i = 0; i < arr.nSantiao; i++) {
                 OutCard o = OutCard.santiao(arr.santiao[i]);
+                removeCard(arr.cards, EMPTY_CARDS, o, true);
                 if (findTail(arr.cards, o, 1, 1, false) || findTail(arr.cards, o, 2, 1,false)) {
+                    removeFrom(o.getTail(),arr.cards,true);
+                    if (i < arr.nSantiao -1) {
+                        for (int t : o.getTail()) {
+                            boolean flag = false;
+                            for (int j = i + 1; j < arr.nSantiao; j++) {
+                                if (t == arr.santiao[j]){
+                                    arr = split.split(arr.cards);
+                                    flag = true;
+                                    break;
+                                }
+                            }
+                            if (flag){
+                             break;
+                            }
+                        }
+                    }
                     o.setType(CardType.SANTIAOWITHTAIL);
                 }
                 double bp = biggestProbability(role, remainCards, remainCardNum, o);
@@ -167,7 +208,7 @@ public interface Strategy {
                 } else if (out == null) {
                     out = o;
                 }
-                removeCard(arr.cards, EMPTY_CARDS, o, true);
+
             }
             arr.nSantiao = 0;
         }
@@ -193,27 +234,6 @@ public interface Strategy {
             return null;
         }
 
-        if (arr.nFeiji > 0) {
-            for (int i = 0; i < arr.nFeiji; i++) {
-                OutCard o = OutCard.feiji(arr.feiji[i]);
-                if (findTail(arr.cards, o, 1, arr.feiji[i][1], false) || findTail(arr.cards, o, 2, arr.feiji[i][1], false)) {
-                    o.setType(CardType.FEIJIWITHTAIL);
-                }
-                double bp = biggestProbability(role, remainCards, remainCardNum, o);
-                o.setBp(bp);
-                if (bp < Config.SMALL_CARD_MAP.get(o.getType())) {
-                    n++;
-                    small.add(o);
-                    if (n > 2) {
-                        return null;
-                    }
-                } else if (out == null) {
-                    out = o;
-                }
-                removeCard(arr.cards, EMPTY_CARDS, o, true);
-            }
-            arr.nFeiji = 0;
-        }
 
         if (n > 2) {
             return null;
@@ -761,7 +781,7 @@ public interface Strategy {
      * @param n     带几对
      * @return 是否有找到合适的带牌
      */
-    private boolean findTail(int[] cards, OutCard out, int k, int n, boolean force) {
+    default boolean findTail(int[] cards, OutCard out, int k, int n, boolean force) {
 
 
         CardArray arr = split.split(cards, k == 2);
@@ -906,10 +926,12 @@ public interface Strategy {
                     cards[v[0] - i] -= a * 3;
                     alreadyCards[v[0] - i] += a * 3;
                 }
-                if (outCard.getTail() != null) {
-                    for (int i : outCard.getTail()) {
-                        cards[i] -= a;
-                        alreadyCards[i] += a;
+                if (type == CardType.FEIJIWITHTAIL) {
+                    if (outCard.getTail() != null) {
+                        for (int i : outCard.getTail()) {
+                            cards[i] -= a;
+                            alreadyCards[i] += a;
+                        }
                     }
                 }
                 break;
@@ -1061,9 +1083,9 @@ public interface Strategy {
     }
 
     public static void removeFrom(int[] toDel, int[] from, boolean remove) {
-        int a = remove ? 1 : -1;
+        int a = remove ? -1 : 1;
         for (int i = 0; i < toDel.length; i++) {
-            from[i] += a * from[i];
+            from[toDel[i]] += a;
         }
 
     }

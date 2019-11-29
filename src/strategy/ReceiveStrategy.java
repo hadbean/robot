@@ -10,6 +10,7 @@ import java.util.List;
 public class ReceiveStrategy implements Strategy {
 
     //是否可以一手出完
+    public int round;
 
 
     public ReceiveStrategy(int round) {
@@ -306,8 +307,12 @@ public class ReceiveStrategy implements Strategy {
                     }
                 }
 
-
                 double bp = biggestProbability(role, remainingCards, remainCardNums, outcard);
+                if (remainCardNums[0] < 3 || bp > Config.SMALL_CARD_MAP.get(outcard.getType())){
+                    return best;
+                }
+
+                //如果地址出大牌了，手牌很少，则接
 //                double bpSelf = biggestProbability(role, remainingCards, remainCardNums, best);
 //                if (bpSelf - bp < Config.)
 
@@ -319,17 +324,25 @@ public class ReceiveStrategy implements Strategy {
             }
         } else {
             int s = split.split(cards).score();
+            int bs = best.getScore();
 
-            if (best.getScore() > s) {
+            if (bs >= s) {
                 return best;
             }
             if (s > Config.GOOD_CARDS_VALUE) {
+                return best;
+            }
+            if (s - bs < CardArray.P[round]){
                 return best;
             }
 
             //地主接牌规则,接地主下级时，尽可能接牌，因为该位置不会故意压牌，大部分情况下，不会由他来压牌，更多是为了跑牌
             if (outcard.getRole() == 1) {
                 if (best.getType() == outcard.getType() && best.getType() != CardType.ZHADAN && best.getType() != CardType.HUOJIAN && (best.getCards()[0] < 12 || (best.getCards()[0] - outcard.getCards()[0] < Config.MAX_CARDS_SPAN))) {
+                    return best;
+                }
+            }else {
+                if (best.getType() == outcard.getType() && best.getType() != CardType.ZHADAN && best.getType() != CardType.HUOJIAN && (best.getCards()[0] < 12)) {
                     return best;
                 }
             }
@@ -389,5 +402,23 @@ public class ReceiveStrategy implements Strategy {
         System.out.println(p);
         System.out.println(System.currentTimeMillis() - begin);
 
+    }
+
+    public OutCard zhaAndWin(int role,int[] cards, int[] remainCards, int[] remainCardNum,OutCard outCard) {
+        OutCard o = Strategy.findZhanDanOrHuoJian(cards,outCard);
+        if (o != null){
+            Strategy.removeCard(cards,EMPTY_CARDS,o,true);
+            OutCard oneHand = OutCardStrategy.oneHand(split.split(cards),o.getType() == CardType.ZHADAN?remainCardNum[role] - 4:remainCardNum[role] - 2);
+            if (oneHand!=null){
+                if (o.getType() == CardType.HUOJIAN || Strategy.randomFloat() > 0.3 || biggestProbability(role,remainCards,remainCardNum,o) > Config.SMALL_CARD){
+                    Strategy.removeCard(cards,EMPTY_CARDS,o,false);
+                    return o;
+                }
+
+            }
+            Strategy.removeCard(cards,EMPTY_CARDS,o,false);
+        }
+
+        return null;
     }
 }

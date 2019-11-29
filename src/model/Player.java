@@ -26,6 +26,16 @@ public class Player {
 
     //主动出牌
 
+    public int call() {
+
+        OutCardStrategy strategy = new OutCardStrategy(0);
+        CardArray arr = new CardSplit().split(cards);
+        int[] remainingCards = strategy.remainingCardsExceptMe(cards, new int[15]);
+        int k = 0;
+//        if (arr.)
+        return 0;
+    }
+
     /**
      * @param round            第几圈
      * @param remainingCardNum 每个玩家剩余手牌数量
@@ -150,7 +160,7 @@ public class Player {
         }
 
         //找到所有适合的牌
-        List<OutCard> outs = strategy.findBiggerCards(cards, remainingCardNum[role], outCard, true);
+        List<OutCard> outs = strategy.findBiggerCards(cards, remainingCardNum[role], outCard, round > 3);
         if (outs == null || outs.size() == 0) {
             return null;
         }
@@ -158,6 +168,11 @@ public class Player {
         int emeryCardNum = role == 0 ? Math.min(remainingCardNum[1], remainingCardNum[2]) : remainingCardNum[0];
 
         int[] remainCards = strategy.remainingCardsExceptMe(cards, alreadyOutCards);
+
+        out =strategy.zhaAndWin(role,cards,remainCards,remainingCardNum,outCard);
+        if (out != null){
+            return out;
+        }
 
         out = strategy.jieAndWin(role, cards, remainCards, outs, remainingCardNum);
 
@@ -172,9 +187,8 @@ public class Player {
                 out.setMode("enemyLastOne");
                 return out;
             }
-        } else {
-
         }
+        //只剩两牌
 
         //队友只剩下一张牌，且在我下家
         // 则不用管自己的牌型，直接顶地主牌，如果是队友的牌，则手牌如果有小于9的牌，直接炸弹走起

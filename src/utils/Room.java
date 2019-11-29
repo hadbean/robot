@@ -101,7 +101,7 @@ public class Room {
                     System.out.println(p.getRole() + "号玩家获胜");
 
                     for (int i = 0; i < alreadyOutCards.length; i++) {
-                        if (alreadyOutCards[i] < 0 || alreadyOutCards[i] != (CARDS[i] - players[0].getCards()[i] - players[1].getCards()[i] - players[2].getCards()[i])) {
+                        if (alreadyOutCards[i] < 0 || alreadyOutCards[i] > 4 || alreadyOutCards[i] != (CARDS[i] - players[0].getCards()[i] - players[1].getCards()[i] - players[2].getCards()[i])) {
                             System.out.println("already :" + i + "\t" + alreadyOutCards[i] + "\t" + (CARDS[i] - players[0].getCards()[i] - players[1].getCards()[i] - players[2].getCards()[i]));
 
                             throw new RuntimeException("出牌规则不符合:" + OutCard.POKE[i]);
@@ -169,7 +169,7 @@ public class Room {
 
         int[] wins = new int[3];
         Room room = new Room();
-        int i = 10000;
+        int i = 100000;
         while (i > 0) {
             room.init();
             wins[room.play(true)] += 1;

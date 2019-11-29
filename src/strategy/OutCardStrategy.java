@@ -23,7 +23,7 @@ public class OutCardStrategy implements Strategy {
         split.setRound(round);
     }
 
-    public OutCard oneHand(CardArray cards, int remainCardNum) {
+    public static OutCard oneHand(CardArray cards, int remainCardNum) {
 
         OutCard outCard = null;
         switch (remainCardNum) {
@@ -203,87 +203,95 @@ public class OutCardStrategy implements Strategy {
         OutCard out = null;
         List<OutCard> outs = new ArrayList<>(3);
         if (cards.nFeiji > 0) {
-            OutCard o1 = null;
-            int mbp = 0;
-            if (cards.nDan >= cards.feiji[0][1]) {
-                int n = cards.feiji[0][1];
-                int[] tail = new int[n];
-                for (int i = 0; i < n; i++) {
-                    tail[i] = cards.dan[i];
-                    mbp += cards.dan[i] - Config.REF;
-                }
-
-                o1 = OutCard.feijiWithTail(cards.feiji[0], tail);
-
+            OutCard o1 = OutCard.feiji(cards.feiji[0]);
+            Strategy.removeCard(cards.cards,EMPTY_CARDS,o1,true);
+            if (findTail(cards.cards, o1, 1, cards.feiji[0][1], false) || findTail(cards.cards, o1, 2, cards.feiji[0][1], false)) {
+                Strategy.removeCard(cards.cards,EMPTY_CARDS,o1,false);
+//                Strategy.removeFrom(o1.getTail(),cards.cards,true);
+                o1.setType(CardType.FEIJIWITHTAIL);
+            }else {
+                Strategy.removeCard(cards.cards,EMPTY_CARDS,o1,false);
             }
-            if (cards.nDuizi >= cards.feiji[0][1]) {
-                int mbp2 = 0;
-                int n = cards.feiji[0][1];
-                int[] tail = new int[2 * n];
-                for (int i = 0; i < n; i++) {
-
-                    tail[2 * i] = cards.duizi[i];
-                    tail[2 * i + 1] = cards.duizi[i];
-                    mbp2 += cards.duizi[i] > Config.REF ? (cards.duizi[i] - Config.REF) * 3 / 2 : (cards.duizi[i] - Config.REF);
-                }
-                if ((o1 != null && mbp2 < mbp) || o1 == null) {
-                    o1 = OutCard.feijiWithTail(cards.feiji[0], tail);
-                }
-            }
-            if (o1 == null && (cards.nDuizi * 2 + cards.nDan >= cards.feiji[0][1])) {
-                if (cards.feiji[0][1] == 2) {
-                    int[] tail = new int[2];
-                    if (cards.nDan == 1) {
-                        if (cards.dan[0] > cards.duizi[0]) {
-                            tail[0] = cards.duizi[0];
-                            tail[1] = cards.duizi[0];
-                        } else {
-                            tail[0] = cards.dan[0];
-                            tail[1] = cards.duizi[0];
-                        }
-                    } else {
-                        tail[0] = cards.duizi[0];
-                        tail[1] = cards.duizi[0];
-                    }
-                    o1 = OutCard.feijiWithTail(cards.feiji[0], tail);
-                } else if (cards.feiji[0][1] == 3) {
-                    int[] tail = new int[3];
-                    if (cards.nDan == 1) {
-                        if (cards.nDuizi == 1 || cards.dan[0] < cards.duizi[0]) {
-                            tail[0] = cards.duizi[0];
-                            tail[1] = cards.duizi[0];
-                            tail[2] = cards.dan[0];
-                        } else if (cards.nDuizi > 1) {
-                            if (cards.dan[0] < cards.duizi[1]) {
-                                tail[0] = cards.duizi[0];
-                                tail[1] = cards.duizi[0];
-                                tail[2] = cards.dan[0];
-                            } else {
-                                tail[0] = cards.duizi[0];
-                                tail[1] = cards.duizi[0];
-                                tail[2] = cards.duizi[1];
-                            }
-                        }
-                    } else if (cards.nDan == 0) {
-                        tail[0] = cards.duizi[0];
-                        tail[1] = cards.duizi[0];
-                        tail[2] = cards.duizi[1];
-                    } else if (cards.nDan == 2) {
-                        if (cards.dan[1] < cards.duizi[0]) {
-                            tail[0] = cards.dan[0];
-                            tail[1] = cards.dan[1];
-                            tail[2] = cards.duizi[0];
-                        } else {
-                            tail[0] = cards.dan[0];
-                            tail[1] = cards.duizi[0];
-                            tail[2] = cards.duizi[0];
-                        }
-                    }
-                    o1 = OutCard.feijiWithTail(cards.feiji[0], tail);
-                }
-            } else if (o1 == null) {
-                o1 = OutCard.feiji(cards.feiji[0]);
-            }
+//            int mbp = 0;
+//            if (cards.nDan >= cards.feiji[0][1]) {
+//                int n = cards.feiji[0][1];
+//                int[] tail = new int[n];
+//                for (int i = 0; i < n; i++) {
+//                    tail[i] = cards.dan[i];
+//                    mbp += cards.dan[i] - Config.REF;
+//                }
+//
+//                o1 = OutCard.feijiWithTail(cards.feiji[0], tail);
+//
+//            }
+//            if (cards.nDuizi >= cards.feiji[0][1]) {
+//                int mbp2 = 0;
+//                int n = cards.feiji[0][1];
+//                int[] tail = new int[2 * n];
+//                for (int i = 0; i < n; i++) {
+//
+//                    tail[2 * i] = cards.duizi[i];
+//                    tail[2 * i + 1] = cards.duizi[i];
+//                    mbp2 += cards.duizi[i] > Config.REF ? (cards.duizi[i] - Config.REF) * 3 / 2 : (cards.duizi[i] - Config.REF);
+//                }
+//                if ((o1 != null && mbp2 < mbp) || o1 == null) {
+//                    o1 = OutCard.feijiWithTail(cards.feiji[0], tail);
+//                }
+//            }
+//            if (o1 == null && (cards.nDuizi * 2 + cards.nDan >= cards.feiji[0][1])) {
+//                if (cards.feiji[0][1] == 2) {
+//                    int[] tail = new int[2];
+//                    if (cards.nDan == 1) {
+//                        if (cards.dan[0] > cards.duizi[0]) {
+//                            tail[0] = cards.duizi[0];
+//                            tail[1] = cards.duizi[0];
+//                        } else {
+//                            tail[0] = cards.dan[0];
+//                            tail[1] = cards.duizi[0];
+//                        }
+//                    } else {
+//                        tail[0] = cards.duizi[0];
+//                        tail[1] = cards.duizi[0];
+//                    }
+//                    o1 = OutCard.feijiWithTail(cards.feiji[0], tail);
+//                } else if (cards.feiji[0][1] == 3) {
+//                    int[] tail = new int[3];
+//                    if (cards.nDan == 1) {
+//                        if (cards.nDuizi == 1 || cards.dan[0] < cards.duizi[0]) {
+//                            tail[0] = cards.duizi[0];
+//                            tail[1] = cards.duizi[0];
+//                            tail[2] = cards.dan[0];
+//                        } else if (cards.nDuizi > 1) {
+//                            if (cards.dan[0] < cards.duizi[1]) {
+//                                tail[0] = cards.duizi[0];
+//                                tail[1] = cards.duizi[0];
+//                                tail[2] = cards.dan[0];
+//                            } else {
+//                                tail[0] = cards.duizi[0];
+//                                tail[1] = cards.duizi[0];
+//                                tail[2] = cards.duizi[1];
+//                            }
+//                        }
+//                    } else if (cards.nDan == 0) {
+//                        tail[0] = cards.duizi[0];
+//                        tail[1] = cards.duizi[0];
+//                        tail[2] = cards.duizi[1];
+//                    } else if (cards.nDan == 2) {
+//                        if (cards.dan[1] < cards.duizi[0]) {
+//                            tail[0] = cards.dan[0];
+//                            tail[1] = cards.dan[1];
+//                            tail[2] = cards.duizi[0];
+//                        } else {
+//                            tail[0] = cards.dan[0];
+//                            tail[1] = cards.duizi[0];
+//                            tail[2] = cards.duizi[0];
+//                        }
+//                    }
+//                    o1 = OutCard.feijiWithTail(cards.feiji[0], tail);
+//                }
+//            } else if (o1 == null) {
+//                o1 = OutCard.feiji(cards.feiji[0]);
+//            }
             outs.add(o1);
         }
         if (cards.nLiandui > 0) {
@@ -375,12 +383,7 @@ public class OutCardStrategy implements Strategy {
     //以小牌优先
     public OutCard smallFirst(CardArray cards, int role, int[] remainingCards, int[] remainCardNum) {
         List<OutCard> outs = new ArrayList<>(3);
-        if (cards.nDan > 0) {
-            outs.add(OutCard.dan(cards.dan[0]));
-        }
-        if (cards.nDuizi > 0) {
-            outs.add(OutCard.duizi(cards.duizi[0]));
-        }
+
         if (cards.nSantiao > 0) {
             if (cards.nDan > 0 && cards.nDuizi > 0) {
                 outs.add(OutCard.santiaoWithTail(cards.santiao[0], cards.dan[0] > cards.duizi[0] ? new int[]{cards.duizi[0], cards.duizi[0]} : new int[]{cards.dan[0]}));
@@ -393,11 +396,18 @@ public class OutCardStrategy implements Strategy {
             }
         }
 
+        if (cards.nDan > 0) {
+            outs.add(OutCard.dan(cards.dan[0]));
+        }
+        if (cards.nDuizi > 0) {
+            outs.add(OutCard.duizi(cards.duizi[0]));
+        }
+
         OutCard out = null;
         if (!outs.isEmpty()) {
             double minBp = 1.1;
             for (OutCard o : outs) {
-                double bp = biggestProbability(role, remainingCards,  remainCardNum, o);
+                double bp = biggestProbability(role, remainingCards,  remainCardNum, o,false);
                 if (bp < minBp) {
                     minBp = bp;
                     out = o;
