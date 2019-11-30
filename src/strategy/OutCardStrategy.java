@@ -324,38 +324,16 @@ public class OutCardStrategy implements Strategy {
     }
 
     //牌比较少的时候	优先出单张以外的牌
-    public OutCard fewPoke(CardArray cards, int remainCardNum) {
+    public Boolean fewPoke(CardArray cards, int remainCardNum) {
 
         if (cards.nDan == remainCardNum) {
-            return null;
+            return false;
         }
-
-        if (remainCardNum < 17 / 3) {
-            if (cards.nDuizi > 0) {
-                return OutCard.duizi(cards.duizi[0]);
-            } else if (cards.nSantiao > 0) {
-                if (cards.nDan == 0 && cards.nDuizi == 0) {
-                    return OutCard.santiao(cards.santiao[0]);
-                } else {
-                    if (cards.nDan > 0 && cards.nDuizi > 0) {
-                        if (cards.dan[0] > cards.duizi[0]) {
-                            return OutCard.santiaoWithTail(cards.santiao[0], new int[]{cards.duizi[0], cards.duizi[0]});
-                        } else {
-                            return OutCard.santiaoWithTail(cards.santiao[0], new int[]{cards.dan[0]});
-                        }
-                    } else if (cards.nDan > 0 && cards.dan[0] < 12) {
-                        return OutCard.santiaoWithTail(cards.santiao[0], new int[]{cards.dan[0]});
-                    } else if (cards.duizi[0] < 11) {
-                        return OutCard.santiaoWithTail(cards.santiao[0], new int[]{cards.duizi[0], cards.duizi[0]});
-                    } else {
-                        return OutCard.santiao(cards.santiao[0]);
-                    }
-
-                }
-            }
-
+        cards.score();
+        if (cards.NHand < 4) {
+            return true;
         }
-        return null;
+        return false;
     }
 
     /**
@@ -386,7 +364,7 @@ public class OutCardStrategy implements Strategy {
     }
 
     //以小牌优先
-    public OutCard smallFirst(CardArray cards, int role, int[] remainingCards, int[] remainCardNum) {
+    public OutCard smallFirst(CardArray cards, int role, int[] remainingCards, int[] remainCardNum, boolean fewHand) {
         List<OutCard> outs = new ArrayList<>(3);
 
         if (cards.nSantiao > 0) {
@@ -479,7 +457,14 @@ public class OutCardStrategy implements Strategy {
                 }
                 if (k > max){
                     max = k;
+                    if (fewHand && out != null && out.getType() == CardType.DAN && o.getType() == CardType.DAN){
+                        continue;
+                    }
                     out = o;
+                }else if (k == max){
+                    if (Strategy.randomFloat() > 0.5){
+                        out = o;
+                    }
                 }
             }
 

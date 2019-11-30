@@ -38,6 +38,7 @@ public class CardArray {
     public int nDuizi;
 
 
+    public int NHand = 0;
 
     public int score() {
         int s = 0;
@@ -105,7 +106,7 @@ public class CardArray {
             s += 12;
         }
         s += nEr * 5;
-
+        NHand = N;
         return s - P[round]*N;
     }
 

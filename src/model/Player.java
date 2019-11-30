@@ -120,11 +120,6 @@ public class Player {
             return outSL;
         }
 
-        out = strategy.fewPoke(rs, remainingCardNum[role]);
-        if (out != null) {
-            out.setMode("fewPoke");
-            return out;
-        }
         if (emeryCarNum == 1) {
             out = strategy.enemyLastOne(rs, role, remainingCardNum);
             if (out != null) {
@@ -132,8 +127,12 @@ public class Player {
                 return out;
             }
         }
+        boolean fewHand = strategy.fewPoke(rs, remainingCardNum[role]);
+        if (fewHand && outSL != null){
+            return outSL;
+        }
 
-        out = strategy.smallFirst(rs, role, remainingCards, remainingCardNum);
+        out = strategy.smallFirst(rs, role, remainingCards, remainingCardNum,fewHand);
         if (out == null && outSL == null) {
             throw new RuntimeException("没法主动出牌异常");
         }
