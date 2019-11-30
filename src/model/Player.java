@@ -115,7 +115,7 @@ public class Player {
             }
         }
         OutCard outSL = strategy.smallAndLongFirst(rs, role, remainingCards, remainingCardNum);
-        if (outSL != null && outSL.getBp() < Config.SMALL_CARD) {
+        if (outSL != null && outSL.getBp() < Config.SMALL_CARD_MAP.get(outSL.getType())) {
             outSL.setMode("smallAndLongFirst");
             return outSL;
         }
@@ -142,7 +142,6 @@ public class Player {
         } else if (outSL == null) {
             return out;
         } else {
-
             return out.getBp() > outSL.getBp() ? outSL : out;
         }
 
@@ -160,7 +159,7 @@ public class Player {
         }
 
         //找到所有适合的牌
-        List<OutCard> outs = strategy.findBiggerCards(cards, remainingCardNum[role], outCard, round > 3);
+        List<OutCard> outs = strategy.findBiggerCards(cards, remainingCardNum[role], outCard, round > 3,false);
         if (outs == null || outs.size() == 0) {
             return null;
         }

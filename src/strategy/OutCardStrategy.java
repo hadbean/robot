@@ -303,7 +303,7 @@ public class OutCardStrategy implements Strategy {
         if (outs.isEmpty()) {
             return null;
         }
-        double minBp = 1;
+        double minBp = 1.1;
         for (OutCard o : outs) {
             double bp = biggestProbability(role, remainingCards, remainCardNum, o);
             if (bp < minBp) {
@@ -318,6 +318,10 @@ public class OutCardStrategy implements Strategy {
 
         return out;
     }
+    public OutCard fewPoke(int role,CardType cards, int[] remainCardNum){
+
+        return null;
+    }
 
     //牌比较少的时候	优先出单张以外的牌
     public OutCard fewPoke(CardArray cards, int remainCardNum) {
@@ -325,6 +329,7 @@ public class OutCardStrategy implements Strategy {
         if (cards.nDan == remainCardNum) {
             return null;
         }
+
         if (remainCardNum < 17 / 3) {
             if (cards.nDuizi > 0) {
                 return OutCard.duizi(cards.duizi[0]);
@@ -385,18 +390,31 @@ public class OutCardStrategy implements Strategy {
         List<OutCard> outs = new ArrayList<>(3);
 
         if (cards.nSantiao > 0) {
+            OutCard o = null;
             if (cards.nDan > 0 && cards.nDuizi > 0) {
-                outs.add(OutCard.santiaoWithTail(cards.santiao[0], cards.dan[0] > cards.duizi[0] ? new int[]{cards.duizi[0], cards.duizi[0]} : new int[]{cards.dan[0]}));
+                o = OutCard.santiaoWithTail(cards.santiao[0], cards.dan[0] > cards.duizi[0] ? new int[]{cards.duizi[0], cards.duizi[0]} : new int[]{cards.dan[0]});
             } else if (cards.nDan > 0) {
-                outs.add(OutCard.santiaoWithTail(cards.santiao[0], new int[]{cards.dan[0]}));
+                o = OutCard.santiaoWithTail(cards.santiao[0], new int[]{cards.dan[0]});
             } else if (cards.nDuizi > 0) {
-                outs.add(OutCard.santiaoWithTail(cards.santiao[0], new int[]{cards.duizi[0], cards.duizi[0]}));
+                o = OutCard.santiaoWithTail(cards.santiao[0], new int[]{cards.duizi[0], cards.duizi[0]});
             } else {
-                outs.add(OutCard.santiao(cards.santiao[0]));
+                o = OutCard.santiao(cards.santiao[0]);
+            }
+            if (o != null){
+                o.setBp(biggestProbability(role, remainingCards,  remainCardNum, o,false));
+                Strategy.removeCard(cards.cards,EMPTY_CARDS,o,true);
+                o.setScore(split.split(cards.cards).score());
+                Strategy.removeCard(cards.cards,EMPTY_CARDS,o,false);
+                outs.add(o);
             }
         }
 
         if (cards.nDan > 0) {
+            OutCard o = OutCard.dan(cards.dan[0]);
+            o.setBp(biggestProbability(role, remainingCards,  remainCardNum, o,false));
+            Strategy.removeCard(cards.cards,EMPTY_CARDS,o,true);
+            o.setScore(split.split(cards.cards).score());
+            Strategy.removeCard(cards.cards,EMPTY_CARDS,o,false);
             outs.add(OutCard.dan(cards.dan[0]));
         }
         if (cards.nDuizi > 0) {
@@ -404,16 +422,67 @@ public class OutCardStrategy implements Strategy {
         }
 
         OutCard out = null;
+
         if (!outs.isEmpty()) {
-            double minBp = 1.1;
+            if (outs.size() == 1){
+                return outs.get(0);
+            }
+            double minS = Integer.MAX_VALUE;
+            double maxS = Integer.MIN_VALUE;
+            double fm = 0;
+            double minBp = Integer.MAX_VALUE;
+            double maxBp = Integer.MIN_VALUE;
+            double minC = Integer.MAX_VALUE;
+            double maxC = Integer.MIN_VALUE;
             for (OutCard o : outs) {
-                double bp = biggestProbability(role, remainingCards,  remainCardNum, o,false);
-                if (bp < minBp) {
-                    minBp = bp;
+                o.setBp(biggestProbability(role, remainingCards,  remainCardNum, o,false));
+                Strategy.removeCard(cards.cards,EMPTY_CARDS,o,true);
+                o.setScore(split.split(cards.cards).score());
+                Strategy.removeCard(cards.cards,EMPTY_CARDS,o,false);
+                if (o.getCards()[0] > maxC){
+                    maxC = o.getCards()[0];
+                }
+                if (o.getBp() > maxBp){
+                    maxBp = o.getBp();
+                }
+                if (o.getScore() > maxS){
+                    maxS = o.getScore();
+                }
+                if (o.getCards()[0] < minC){
+                    minC = o.getCards()[0];
+                }
+                if (o.getBp() < minBp){
+                    minBp = o.getBp();
+                }
+                if (o.getScore() < maxS){
+                    minS = o.getScore();
+                }
+            }
+            int max = 0;
+
+            for (OutCard o : outs) {
+                int k = 0;
+                if (o.getScore()  == maxS){
+                    k +=2;
+                }else if (o.getScore()  > minS){
+                    k ++;
+                }
+                if (o.getBp()  == minBp){
+                    k +=2;
+                }else if (o.getBp()  < maxBp){
+                    k ++;
+                }
+                if (o.getCards()[0]  == minC){
+                    k +=2;
+                }else if (o.getCards()[0]  < minC){
+                    k ++;
+                }
+                if (k > max){
+                    max = k;
                     out = o;
                 }
             }
-            out.setBp(minBp);
+
         }
         return out;
     }

@@ -5,6 +5,7 @@ import constant.CardType;
 import model.CardArray;
 import model.CardGraph;
 import model.OutCard;
+import model.Player;
 import utils.CardSplit;
 
 import java.util.ArrayList;
@@ -130,6 +131,7 @@ public interface Strategy {
         int[] tmpCards = new int[cards.length];
         System.arraycopy(cards, 0, tmpCards, 0, cards.length);
 
+        int myRemainNum = remainCardNum[0];
         CardArray arr = split.split(tmpCards);
         if (arr.nFeiji > 0) {
             for (int i = 0; i < arr.nFeiji; i++) {
@@ -137,7 +139,7 @@ public interface Strategy {
                 removeCard(arr.cards, EMPTY_CARDS, o, true);
                 if (findTail(arr.cards, o, 1, arr.feiji[i][1], false) || findTail(arr.cards, o, 2, arr.feiji[i][1], false)) {
                     o.setType(CardType.FEIJIWITHTAIL);
-                    removeFrom(o.getTail(),arr.cards,true);
+                    removeFrom(o.getTail(), arr.cards, true);
                 }
                 double bp = biggestProbability(role, remainCards, remainCardNum, o);
                 o.setBp(bp);
@@ -159,7 +161,7 @@ public interface Strategy {
             for (int i = 0; i < arr.nShunzi; i++) {
                 OutCard o = OutCard.shunzi(arr.shunzi[i]);
 
-                double bp = biggestProbability(role, remainCards, remainCardNum, o,true);
+                double bp = biggestProbability(role, remainCards, remainCardNum, o, true);
                 o.setBp(bp);
                 if (bp < Config.SMALL_CARD_MAP.get(o.getType())) {
                     n++;
@@ -178,20 +180,20 @@ public interface Strategy {
             for (int i = 0; i < arr.nSantiao; i++) {
                 OutCard o = OutCard.santiao(arr.santiao[i]);
                 removeCard(arr.cards, EMPTY_CARDS, o, true);
-                if (findTail(arr.cards, o, 1, 1, false) || findTail(arr.cards, o, 2, 1,false)) {
-                    removeFrom(o.getTail(),arr.cards,true);
-                    if (i < arr.nSantiao -1) {
+                if (findTail(arr.cards, o, 1, 1, false) || findTail(arr.cards, o, 2, 1, false)) {
+                    removeFrom(o.getTail(), arr.cards, true);
+                    if (i < arr.nSantiao - 1) {
                         for (int t : o.getTail()) {
                             boolean flag = false;
                             for (int j = i + 1; j < arr.nSantiao; j++) {
-                                if (t == arr.santiao[j]){
+                                if (t == arr.santiao[j]) {
                                     arr = split.split(arr.cards);
                                     flag = true;
                                     break;
                                 }
                             }
-                            if (flag){
-                             break;
+                            if (flag) {
+                                break;
                             }
                         }
                     }
@@ -295,8 +297,8 @@ public interface Strategy {
         if (n == 2) {
             if (small.size() > 0) {
                 for (OutCard o : small) {
-                    OutCard bg = findBiggestCardFromMe(role, arr, remainCards, remainCardNum, o);
-                    if (bg != null) {
+                    OutCard bg = findBiggestCardFromMe(role, split.split(cards), remainCards, remainCardNum, o);
+                    if (bg != null && biggestProbability(role,remainCards,remainCardNum,bg,true)  > Config.SMALL_CARD_MAP.get(bg.getType())) {
                         return o;
                     }
                 }
@@ -421,8 +423,8 @@ public interface Strategy {
                             return o;
                         }
                     }
-                }else if (rs.nEr > 1){
-                    if (rs.nEr == 2){
+                } else if (rs.nEr > 1) {
+                    if (rs.nEr == 2) {
                         return OutCard.duizi(12);
                     }
                 }
@@ -561,14 +563,33 @@ public interface Strategy {
      * @param force         是否一定要接，一定要接的话，会考虑炸弹和火箭，并且不管接了牌变坏的情况，否则不考虑
      * @return
      */
-    default List<OutCard> findBiggerCards(int[] cards, int remainCardNum, OutCard outCard, boolean force) {
+    default List<OutCard> findBiggerCards(int[] cards, int remainCardNum, OutCard outCard, boolean force,boolean ignoreZha) {
         List<OutCard> rs = new ArrayList<>();
         int outLength = outCard.getLength();
 
         int[] mainCard = outCard.getCards();
         CardType type = outCard.getType();
+        if (outCard.getType() == CardType.HUOJIAN) {
+            return rs;
+        }
+        if (force) {
+            if (!ignoreZha) {
+                int i = 0;
+                if (outCard.getType() == CardType.ZHADAN) {
+                    i = outCard.getCards()[0] + 1;
+                }
+                for (; i < 13; i++) {
+                    if (cards[i] == 4) {
+                        rs.add(OutCard.zhadan(i));
+                    }
+                }
+            }
+            if (cards[13] == 1 && cards[14] == 1) {
+                rs.add(OutCard.huojian());
+            }
+        }
         if (remainCardNum < outLength) {
-            return null;
+            return rs;
         } else {
 
             switch (type) {
@@ -675,28 +696,18 @@ public interface Strategy {
             }
             //
             if (rs.size() == 0) {
-                if (force) {
-                    for (int i = 0; i < 13; i++) {
-                        if (cards[i] == 4) {
-                            rs.add(OutCard.zhadan(i));
-                        }
-                    }
-                    if (cards[13] == 1 && cards[14] == 1) {
-                        rs.add(OutCard.huojian());
-                    }
-                }
                 return rs;
             }
 
+            // 带牌程序 主动带牌程序，不考虑自身 --------------------------------
+            for (OutCard x : rs) {
+                CardType t = x.getType();
+                switch (t) {
 
-            // 带牌程序
-            switch (type) {
+                    case SANTIAOWITHTAIL: {
 
-                case SANTIAOWITHTAIL: {
-                    for (OutCard x : rs) {
                         int n = 1;
                         cards[x.getCards()[0]] -= 3;
-
                         int k = outCard.getTail().length;
                         boolean flag = findTail(cards, x, k, n, false);
                         cards[x.getCards()[0]] += 3;
@@ -705,13 +716,11 @@ public interface Strategy {
                             return null;
                         }
 
+
+                        break;
                     }
+                    case ZHADANWITHTAIL: {
 
-                    break;
-                }
-                case ZHADANWITHTAIL: {
-
-                    for (OutCard x : rs) {
                         int n = 2;
                         cards[x.getCards()[0]] -= 4;
 
@@ -724,12 +733,11 @@ public interface Strategy {
                             return null;
                         }
 
-                    }
 
-                    break;
-                }
-                case FEIJIWITHTAIL: {
-                    for (OutCard x : rs) {
+                        break;
+                    }
+                    case FEIJIWITHTAIL: {
+
                         int n = x.getCards()[1];
                         for (int i = 0; i < n; i++) {
                             cards[x.getCards()[0] - i] -= 3;
@@ -744,12 +752,13 @@ public interface Strategy {
                             return null;
                         }
 
-                    }
-                    break;
-                }
 
-                default:
-                    break;
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
             }
         }
 
@@ -953,11 +962,12 @@ public interface Strategy {
         }
 
     }
+
     default double biggestProbability(int role, int[] remainingCards, int[] remainingCardNum, OutCard outCard) {
-        return biggestProbability(role,remainingCards,remainingCardNum,outCard,true);
+        return biggestProbability(role, remainingCards, remainingCardNum, outCard, true);
     }
 
-    default double biggestProbability(int role, int[] remainingCards, int[] remainingCardNum, OutCard outCard,boolean force) {
+    default double biggestProbability(int role, int[] remainingCards, int[] remainingCardNum, OutCard outCard, boolean force) {
 
         double p = 0.0;
         int max = 0;
@@ -974,7 +984,7 @@ public interface Strategy {
             p = max * 1.0 / (max + num2);
         }
 
-        List<OutCard> bigger = findBiggerCards(remainingCards, max, outCard, force);
+        List<OutCard> bigger = findBiggerCards(remainingCards, max, outCard, force,true);
         if (bigger == null || bigger.size() == 0) {
             return 1;
         }
@@ -1090,4 +1100,24 @@ public interface Strategy {
 
     }
 
+    public static void main(String[] args) {
+        int[] cards = {0, 3, 2, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0};
+        int[] remainsCards = {2, 0, 0, 0, 0, 0, 2, 1, 2, 3, 0, 1, 1, 1, 1};
+        int[] remainingCardNum = {8, 7, 11};
+        OutCard o = OutCard.dan(12);
+        o.setRole(2);
+        OutCardStrategy strategy = new OutCardStrategy(6);
+
+        OutCard o2 = OutCard.santiaoWithTail(1, new int[]{2, 2});
+        OutCard o3 = OutCard.shunzi(new int[]{11, 5});
+        double bp = strategy.biggestProbability(2, remainsCards, remainingCardNum, o);
+        System.out.println(bp);
+        System.out.println(strategy.biggestProbability(2, remainsCards, remainingCardNum, o2, false));
+        System.out.println(strategy.biggestProbability(2, remainsCards, remainingCardNum, o3, false));
+        Player p = new Player(cards, 2, 1);
+        strategy.remainingCardsExceptMe(cards, remainsCards);
+        OutCard out = p.out(6, remainingCardNum, strategy.remainingCardsExceptMe(cards, remainsCards), o);
+        System.out.println(out);
+        System.out.println(out.getMode());
+    }
 }

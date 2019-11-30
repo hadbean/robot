@@ -272,13 +272,19 @@ public class ReceiveStrategy implements Strategy {
             if (s > Config.GOOD_CARDS_VALUE) {
                 return best;
             }
-            if (biggestProbability(role,remainingCards,remainCardNums,best,false) > Config.SMALL_CARD_MAP.get(best.getType())){
-                return null;
-            }
 
             if (outcard.getRole() != 0) {
+                double b = biggestProbability(role,remainingCards,remainCardNums,best,false);
+                if (outcard.getType() == CardType.DAN || outcard.getType() == CardType.DUI){
+                    if (best.getCards()[0] > 11){
+                        return null;
+                    }
+                }
+                if (b > Config.SMALL_CARD_MAP.get(best.getType())){
+                    return null;
+                }
                 double p = Config.IF1[outcard.getRole()];
-                double bp = biggestProbability(role, remainingCards, remainCardNums, outcard);
+                double bp = biggestProbability(role, remainingCards, remainCardNums, outcard,false);
                 if (outcard.getRole() == 2) {
                     if (bp <= p) {
                         return best;

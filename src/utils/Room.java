@@ -169,7 +169,7 @@ public class Room {
 
         int[] wins = new int[3];
         Room room = new Room();
-        int i = 100000;
+        int i = 1000000;
         while (i > 0) {
             room.init();
             wins[room.play(true)] += 1;

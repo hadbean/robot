@@ -1,7 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="16b621e4-be7a-47a6-9d1a-9a78c693f711" name="Default Changelist" comment="" />
+    <list default="true" id="16b621e4-be7a-47a6-9d1a-9a78c693f711" name="Default Changelist" comment="v2">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ccp_java/META-INF/ccp_java.kotlin_module" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ccp_java/config/Config.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ccp_java/config/Config.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ccp_java/model/Player.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ccp_java/model/Player.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ccp_java/strategy/OutCardStrategy.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ccp_java/strategy/OutCardStrategy.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ccp_java/strategy/ReceiveStrategy$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ccp_java/strategy/ReceiveStrategy$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ccp_java/strategy/ReceiveStrategy.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ccp_java/strategy/ReceiveStrategy.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ccp_java/strategy/Strategy.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ccp_java/strategy/Strategy.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ccp_java/test/PlayTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ccp_java/test/PlayTest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ccp_java/utils/Room.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ccp_java/utils/Room.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/config/Config.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/Config.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/CardArray.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/CardArray.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/strategy/OutCardStrategy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/strategy/OutCardStrategy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/strategy/ReceiveStrategy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/strategy/ReceiveStrategy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/strategy/Strategy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/strategy/Strategy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/PlayTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/PlayTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/Room.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/Room.java" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,8 +37,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/strategy/OutCardStrategy.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="623">
-              <caret line="148" column="55" selection-start-line="148" selection-start-column="55" selection-end-line="148" selection-end-column="55" />
+            <state relative-caret-position="7320">
+              <caret line="488" selection-start-line="15" selection-end-line="488" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -29,8 +49,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/PlayTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="30" column="70" selection-start-line="30" selection-start-column="70" selection-end-line="30" selection-end-column="70" />
+            <state relative-caret-position="332">
+              <caret line="30" column="67" selection-start-line="30" selection-start-column="67" selection-end-line="30" selection-end-column="67" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -41,8 +61,22 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/model/Player.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2970">
-              <caret line="206" selection-start-line="11" selection-end-line="206" />
+            <state relative-caret-position="3195">
+              <caret line="219" selection-start-line="11" selection-end-line="219" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#6488#6489#0" expanded="true" />
+                <element signature="e#6520#6521#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/utils/Room.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="124">
+              <caret line="78" selection-start-line="78" selection-end-line="78" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -53,20 +87,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/strategy/Strategy.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="201">
-              <caret line="763" column="11" selection-start-line="763" selection-start-column="4" selection-end-line="763" selection-end-column="11" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/model/CardGraph.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="623">
-              <caret line="56" column="25" selection-start-line="56" selection-start-column="25" selection-end-line="56" selection-end-column="25" />
+            <state relative-caret-position="287">
+              <caret line="1122" selection-start-line="15" selection-end-line="1122" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -77,8 +99,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/config/Config.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
+            <state relative-caret-position="1260">
+              <caret line="84" column="1" selection-start-line="7" selection-start-column="20" selection-end-line="84" selection-end-column="1" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/strategy/ReceiveStrategy.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="6405">
+              <caret line="429" selection-start-line="10" selection-end-line="429" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -89,14 +123,13 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/utils/CardSplit.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1620">
-              <caret line="108" selection-start-line="108" selection-end-line="108" />
+            <state relative-caret-position="124">
+              <caret line="16" selection-start-line="16" selection-end-line="16" />
               <folding>
                 <element signature="e#126#127#0" expanded="true" />
                 <element signature="e#160#161#0" expanded="true" />
                 <element signature="e#219#220#0" expanded="true" />
                 <element signature="e#273#274#0" expanded="true" />
-                <element signature="e#316#317#0" expanded="true" />
                 <element signature="e#368#369#0" expanded="true" />
               </folding>
             </state>
@@ -106,10 +139,9 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/model/OutCard.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3075">
-              <caret line="247" column="1" selection-start-line="7" selection-start-column="21" selection-end-line="247" selection-end-column="1" />
+            <state relative-caret-position="342">
+              <caret line="32" selection-start-line="32" selection-end-line="32" />
               <folding>
-                <element signature="e#586#587#0" expanded="true" />
                 <element signature="e#614#615#0" expanded="true" />
               </folding>
             </state>
@@ -117,19 +149,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/utils/ShunziSplit.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2850">
-              <caret line="190" selection-start-line="190" selection-end-line="190" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/model/CardArray.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2625">
-              <caret line="181" selection-start-line="5" selection-end-line="181" />
+            <state relative-caret-position="2610">
+              <caret line="180" selection-start-line="5" selection-end-line="180" />
             </state>
           </provider>
         </entry>
@@ -146,14 +169,10 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>3</find>
-      <find>bigg</find>
-      <find>allB</find>
       <find>smallAndLong</find>
       <find>small</find>
       <find>smallF</find>
       <find>smallAndL</find>
-      <find>one</find>
       <find>jie</find>
       <find>地主</find>
       <find>oneHan</find>
@@ -167,15 +186,19 @@
       <find>a * 1</find>
       <find>jieAndW</find>
       <find>all</find>
-      <find>allBig2</find>
-      <find>allBig</find>
       <find>merge</find>
-      <find>smallAnd</find>
       <find>Config.S</find>
       <find>Config.SMALL_CARD</find>
       <find>letF</find>
       <find>oneHand</find>
       <find>no</find>
+      <find>allBig</find>
+      <find>one</find>
+      <find>smallAnd</find>
+      <find>allBig2</find>
+      <find>findBi</find>
+      <find>find</find>
+      <find>jieA</find>
     </findStrings>
     <replaceStrings>
       <replace>length</replace>
@@ -194,6 +217,9 @@
       <replace>a</replace>
       <replace>Config.SMALL_CARD_MAP.get(o.getType())</replace>
     </replaceStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -220,31 +246,31 @@
         <option value="$PROJECT_DIR$/src/utils/CardComparator.java" />
         <option value="$PROJECT_DIR$/src/model/CardGraph.java" />
         <option value="$PROJECT_DIR$/src/test/Test.java" />
-        <option value="$PROJECT_DIR$/src/model/CardArray.java" />
-        <option value="$PROJECT_DIR$/src/model/Player.java" />
         <option value="$PROJECT_DIR$/src/utils/ShunziSplit.java" />
         <option value="$PROJECT_DIR$/src/utils/CardSplit.java" />
+        <option value="$PROJECT_DIR$/src/strategy/ReceiveStrategy.java" />
+        <option value="$PROJECT_DIR$/src/config/Config.java" />
+        <option value="$PROJECT_DIR$/src/strategy/Strategy.java" />
+        <option value="$PROJECT_DIR$/src/model/Player.java" />
+        <option value="$PROJECT_DIR$/src/model/CardArray.java" />
         <option value="$PROJECT_DIR$/src/utils/Room.java" />
         <option value="$PROJECT_DIR$/src/test/PlayTest.java" />
         <option value="$PROJECT_DIR$/src/strategy/OutCardStrategy.java" />
-        <option value="$PROJECT_DIR$/src/strategy/Strategy.java" />
-        <option value="$PROJECT_DIR$/src/strategy/ReceiveStrategy.java" />
-        <option value="$PROJECT_DIR$/src/config/Config.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="359" />
-    <option name="y" value="23" />
+    <option name="x" value="11" />
+    <option name="y" value="44" />
     <option name="width" value="1440" />
     <option name="height" value="770" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -292,10 +318,13 @@
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -309,7 +338,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.Room">
+  <component name="RunManager" selected="Application.PlayTest">
     <configuration name="&lt;template&gt;" type="TestNG" default="true" selected="false">
       <option name="MAIN_CLASS_NAME" />
       <option name="VM_PARAMETERS" value="-ea" />
@@ -336,20 +365,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ReceiveStrategy" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="strategy.ReceiveStrategy" />
-      <module name="ccp_java" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="strategy.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="Room" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="utils.Room" />
       <module name="ccp_java" />
@@ -365,6 +380,20 @@
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="test.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Strategy" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="strategy.Strategy" />
+      <module name="ccp_java" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="strategy.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -412,16 +441,16 @@
       <item itemvalue="Application.SplitTest" />
       <item itemvalue="Application.Room" />
       <item itemvalue="Application.PlayTest" />
-      <item itemvalue="Application.ReceiveStrategy" />
       <item itemvalue="Application.Test" />
+      <item itemvalue="Application.Strategy" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Room" />
         <item itemvalue="Application.PlayTest" />
+        <item itemvalue="Application.Room" />
+        <item itemvalue="Application.Strategy" />
         <item itemvalue="Application.SplitTest" />
         <item itemvalue="Application.Test" />
-        <item itemvalue="Application.ReceiveStrategy" />
       </list>
     </recent_temporary>
   </component>
@@ -458,23 +487,32 @@
       <workItem from="1574666753973" duration="16126000" />
       <workItem from="1574825848086" duration="34187000" />
       <workItem from="1574920823822" duration="747000" />
+      <workItem from="1575026320646" duration="20992000" />
     </task>
+    <task id="LOCAL-00001" summary="v2">
+      <created>1575029950067</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1575029950067</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="361803000" />
+    <option name="totallyTimeSpent" value="382795000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="359" y="23" width="1440" height="770" extended-state="0" />
+    <frame x="50" y="143" width="1440" height="770" extended-state="0" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49753696" visible="true" weight="0.23390558" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49753696" visible="true" weight="0.3201389" />
       <window_info id="Structure" order="1" sideWeight="0.50246304" side_tool="true" weight="0.2360515" />
       <window_info id="Designer" order="2" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32890856" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.39085546" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.40117994" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.3319027" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.40057224" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -483,7 +521,7 @@
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.32890856" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="11" />
-      <window_info anchor="bottom" id="Messages" order="12" weight="0.32890856" />
+      <window_info anchor="bottom" id="Messages" order="12" weight="0.32761088" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -498,15 +536,13 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="v2" />
+    <option name="LAST_COMMIT_MESSAGE" value="v2" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/model/CardArray.java</url>
-          <line>24</line>
-          <properties />
-          <option name="timeStamp" value="12" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/strategy/OutCardStrategy.java</url>
           <line>192</line>
@@ -515,15 +551,33 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/utils/Room.java</url>
-          <line>57</line>
-          <properties />
-          <option name="timeStamp" value="156" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/utils/Room.java</url>
           <line>78</line>
           <properties />
           <option name="timeStamp" value="164" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/strategy/Strategy.java</url>
+          <line>1118</line>
+          <properties />
+          <option name="timeStamp" value="166" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/utils/Room.java</url>
+          <line>57</line>
+          <properties />
+          <option name="timeStamp" value="170" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/model/Player.java</url>
+          <line>90</line>
+          <properties />
+          <option name="timeStamp" value="171" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/model/Player.java</url>
+          <line>135</line>
+          <properties />
+          <option name="timeStamp" value="174" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -678,47 +732,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/strategy/ReceiveStrategy.java">
+    <entry file="file://$PROJECT_DIR$/src/model/CardGraph.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4680">
-          <caret line="314" column="46" selection-start-line="314" selection-start-column="46" selection-end-line="314" selection-end-column="46" />
+        <state relative-caret-position="795">
+          <caret line="56" column="25" selection-start-line="56" selection-start-column="25" selection-end-line="56" selection-end-column="25" />
           <folding>
             <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utils/Room.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1035">
-          <caret line="69" column="24" selection-start-line="69" selection-start-column="24" selection-end-line="69" selection-end-column="24" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/PlayTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="30" column="70" selection-start-line="30" selection-start-column="70" selection-end-line="30" selection-end-column="70" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utils/CardSplit.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1620">
-          <caret line="108" selection-start-line="108" selection-end-line="108" />
-          <folding>
-            <element signature="e#126#127#0" expanded="true" />
-            <element signature="e#160#161#0" expanded="true" />
-            <element signature="e#219#220#0" expanded="true" />
-            <element signature="e#273#274#0" expanded="true" />
-            <element signature="e#316#317#0" expanded="true" />
-            <element signature="e#368#369#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -730,58 +749,93 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/config/Config.java">
+    <entry file="file://$PROJECT_DIR$/src/utils/CardSplit.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
+        <state relative-caret-position="124">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
           <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/model/Player.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2970">
-          <caret line="206" selection-start-line="11" selection-end-line="206" />
-          <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#126#127#0" expanded="true" />
+            <element signature="e#160#161#0" expanded="true" />
+            <element signature="e#219#220#0" expanded="true" />
+            <element signature="e#273#274#0" expanded="true" />
+            <element signature="e#368#369#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/model/OutCard.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3075">
-          <caret line="247" column="1" selection-start-line="7" selection-start-column="21" selection-end-line="247" selection-end-column="1" />
+        <state relative-caret-position="342">
+          <caret line="32" selection-start-line="32" selection-end-line="32" />
           <folding>
-            <element signature="e#586#587#0" expanded="true" />
             <element signature="e#614#615#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/model/CardArray.java">
+    <entry file="file://$PROJECT_DIR$/src/test/PlayTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2625">
-          <caret line="181" selection-start-line="5" selection-end-line="181" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/model/CardGraph.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="623">
-          <caret line="56" column="25" selection-start-line="56" selection-start-column="25" selection-end-line="56" selection-end-column="25" />
+        <state relative-caret-position="332">
+          <caret line="30" column="67" selection-start-line="30" selection-start-column="67" selection-end-line="30" selection-end-column="67" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/Room.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="124">
+          <caret line="78" selection-start-line="78" selection-end-line="78" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/config/Config.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1260">
+          <caret line="84" column="1" selection-start-line="7" selection-start-column="20" selection-end-line="84" selection-end-column="1" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/model/CardArray.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2610">
+          <caret line="180" selection-start-line="5" selection-end-line="180" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/model/Player.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3195">
+          <caret line="219" selection-start-line="11" selection-end-line="219" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#6488#6489#0" expanded="true" />
+            <element signature="e#6520#6521#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/strategy/OutCardStrategy.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="623">
-          <caret line="148" column="55" selection-start-line="148" selection-start-column="55" selection-end-line="148" selection-end-column="55" />
+        <state relative-caret-position="7320">
+          <caret line="488" selection-start-line="15" selection-end-line="488" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/strategy/ReceiveStrategy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6405">
+          <caret line="429" selection-start-line="10" selection-end-line="429" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -790,8 +844,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/strategy/Strategy.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
-          <caret line="763" column="11" selection-start-line="763" selection-start-column="4" selection-end-line="763" selection-end-column="11" />
+        <state relative-caret-position="287">
+          <caret line="1122" selection-start-line="15" selection-end-line="1122" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

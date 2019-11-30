@@ -39,7 +39,6 @@ public class CardArray {
 
 
 
-
     public int score() {
         int s = 0;
         int N = 0;
