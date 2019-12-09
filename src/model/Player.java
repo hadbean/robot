@@ -16,6 +16,8 @@ public class Player {
     // 0 地主，1，地主下 2地主上
     private int role;
     private int type;
+    private int minCardFriend;
+    private int minCardEnemy;
 
 
     public Player(int[] cards, int role, int type) {
@@ -26,10 +28,41 @@ public class Player {
 
     //主动出牌
 
-    public int call() {
+    /**
+     * @param s 其他人叫的分
+     * @return
+     */
+    public int jiaoDiZhu(int s) {
 
+        if (s > 3) {
+            return 0;
+        }
         OutCardStrategy strategy = new OutCardStrategy(0);
         CardArray arr = new CardSplit().split(cards);
+        int maxCard = 0;
+        maxCard += arr.nHuojian + arr.nZhadan + arr.nEr;
+        if (arr.nHuojian == 0) {
+            maxCard += cards[13];
+            maxCard += cards[14];
+        }
+        if (cards[12] == 1) {
+            maxCard += 1;
+        }
+        maxCard += cards[11] / 2;
+        if (maxCard > 5) {
+            return 3;
+        }
+        int score = arr.score();
+        if (score > 10) {
+            return 3;
+        }
+        if (arr.NHand <= 6 && maxCard > 2) {
+            return 3;
+        }
+        if (arr.NHand > 6 && arr.NHand <= 8 && maxCard > 4){
+            return 3;
+        }
+
         int[] remainingCards = strategy.remainingCardsExceptMe(cards, new int[15]);
         int k = 0;
 //        if (arr.)
@@ -53,7 +86,7 @@ public class Player {
         OutCardStrategy strategy = new OutCardStrategy(round);
 
         //判断是否一手牌出完
-        OutCard out = strategy.oneHand(rs, remainingCardNum[role]);
+        OutCard out = OutCardStrategy.oneHand(rs, remainingCardNum[role]);
         int emeryCarNum = role == 0 ? Math.min(remainingCardNum[1], remainingCardNum[2]) : remainingCardNum[0];
 
         int[] remainingCards = strategy.remainingCardsExceptMe(cards, alreadyOutCards);
@@ -103,14 +136,18 @@ public class Player {
         }
         //判断是否让队友过牌,如果队友是我下家，且只剩一张牌，不用考虑自己牌型，直接让他过
         if (role == 1 && remainingCardNum[2] == 1) {
-            for (int i = 0; i <= 7; i++) {
-                if (cards[i] > 0) {
-                    out = strategy.letFriend(cards);
-                    if (out != null) {
-                        out.setMode("letFriend");
-                        return out;
-                    }
+            out = strategy.letFriend(cards);
+            if (out != null) {
+                out.setMode("letFriend");
+                return out;
+            }
+        }
 
+        //如果队友只剩下两张牌，我优先出对子
+        if ((role == 1 && remainingCardNum[2] == 2) || (role == 2 && remainingCardNum[1] == 2 && remainingCardNum[0] != 2)) {
+            for (int i = 0; i < rs.nDuizi; i++) {
+                if (rs.duizi[i] <= 7) {
+                    return OutCard.duizi(rs.duizi[i]);
                 }
             }
         }
@@ -128,11 +165,11 @@ public class Player {
             }
         }
         boolean fewHand = strategy.fewPoke(rs, remainingCardNum[role]);
-        if (fewHand && outSL != null){
+        if (fewHand && outSL != null) {
             return outSL;
         }
 
-        out = strategy.smallFirst(rs, role, remainingCards, remainingCardNum,fewHand);
+        out = strategy.smallFirst(rs, role, remainingCards, remainingCardNum, fewHand);
         if (out == null && outSL == null) {
             throw new RuntimeException("没法主动出牌异常");
         }
@@ -158,17 +195,17 @@ public class Player {
         }
 
         //找到所有适合的牌
-        List<OutCard> outs = strategy.findBiggerCards(cards, remainingCardNum[role], outCard, round > 3,false);
+        List<OutCard> outs = strategy.findBiggerCards(cards, remainingCardNum[role], outCard, round > 3, false);
         if (outs == null || outs.size() == 0) {
             return null;
         }
 
-        int emeryCardNum = role == 0 ? Math.min(remainingCardNum[1], remainingCardNum[2]) : remainingCardNum[0];
+//        int emeryCardNum = role == 0 ? Math.min(remainingCardNum[1], remainingCardNum[2]) : remainingCardNum[0];
 
         int[] remainCards = strategy.remainingCardsExceptMe(cards, alreadyOutCards);
 
-        out =strategy.zhaAndWin(role,cards,remainCards,remainingCardNum,outCard);
-        if (out != null){
+        out = strategy.zhaAndWin(role, cards, remainCards, remainingCardNum, outCard);
+        if (out != null) {
             return out;
         }
 
@@ -180,7 +217,7 @@ public class Player {
         }
 
         if (role == 2 && remainingCardNum[0] == 1 && outCard.getType() == CardType.DAN && outCard.getRole() == 1) {
-            out = strategy.enemyLastOne(role, cards, outCard.getCards(), remainCards);
+            out = strategy.enemyLastOne(role, cards, outCard.getCards(), remainCards, remainingCardNum);
             if (out != null) {
                 out.setMode("enemyLastOne");
                 return out;

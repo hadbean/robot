@@ -162,6 +162,7 @@ public class ReceiveStrategy implements Strategy {
         }
     }
 
+    //接完该牌后，能赢
     public OutCard jieAndWin(int role, int[] cards, int[] remainCards, List<OutCard> outCards, int[] remainingCardNum) {
 
         for (OutCard x : outCards) {
@@ -203,10 +204,10 @@ public class ReceiveStrategy implements Strategy {
      * @return
      */
 
-    public OutCard enemyLastOne(int role, int[] cards, int[] outCard, int[] remainCards) {
+    public OutCard enemyLastOne(int role, int[] cards, int[] outCard, int[] remainCards,int[] remainingCardNum) {
 
 
-        int i = canBiggerThanMe(outCard, CardType.DAN, remainCards, 1);
+        int i = canBiggerThanMe(outCard, CardType.DAN, cards, 1);
         if (i == 1) {
             CardArray rs = split.split(cards);
             if (rs.nDan > 0) {
@@ -222,7 +223,7 @@ public class ReceiveStrategy implements Strategy {
                 }
             }
             if (rs.nZhadan > 0 || rs.nHuojian > 0) {
-                OutCard tmp = allBig(role, rs, remainCards, 1);
+                OutCard tmp = allBig2(role, cards, remainCards, remainingCardNum);
                 if (tmp != null) {
                     return rs.nZhadan > 0 ? OutCard.zhadan(rs.zhadan[0]) : OutCard.huojian();
                 }
@@ -242,14 +243,14 @@ public class ReceiveStrategy implements Strategy {
 
         OutCard biggest = Strategy.findZhanDanOrHuoJian(cards, outCard);
         if (biggest != null) {
-            Strategy.removeCard(cards,EMPTY_CARDS,biggest,true);
+            Strategy.removeCard(cards, EMPTY_CARDS, biggest, true);
             for (int i = 0; i < minAccept; i++) {
                 if (cards[i] > 0) {
-                    Strategy.removeCard(cards,EMPTY_CARDS,biggest,false);
+                    Strategy.removeCard(cards, EMPTY_CARDS, biggest, false);
                     return biggest;
                 }
             }
-            Strategy.removeCard(cards,EMPTY_CARDS,biggest,false);
+            Strategy.removeCard(cards, EMPTY_CARDS, biggest, false);
         }
         if (outCard.getRole() == 2) {
             return null;
@@ -274,17 +275,17 @@ public class ReceiveStrategy implements Strategy {
             }
 
             if (outcard.getRole() != 0) {
-                double b = biggestProbability(role,remainingCards,remainCardNums,best,false);
-                if (outcard.getType() == CardType.DAN || outcard.getType() == CardType.DUI){
-                    if (best.getCards()[0] > 11){
+                double b = biggestProbability(role, remainingCards, remainCardNums, best, false);
+                if (outcard.getType() == CardType.DAN || outcard.getType() == CardType.DUI) {
+                    if (best.getCards()[0] > 11) {
                         return null;
                     }
                 }
-                if (b > Config.SMALL_CARD_MAP.get(best.getType())){
+                if (b > Config.SMALL_CARD_MAP.get(best.getType())) {
                     return null;
                 }
                 double p = Config.IF1[outcard.getRole()];
-                double bp = biggestProbability(role, remainingCards, remainCardNums, outcard,false);
+                double bp = biggestProbability(role, remainingCards, remainCardNums, outcard, false);
                 if (outcard.getRole() == 2) {
                     if (bp <= p) {
                         return best;
@@ -314,7 +315,7 @@ public class ReceiveStrategy implements Strategy {
                 }
 
                 double bp = biggestProbability(role, remainingCards, remainCardNums, outcard);
-                if (remainCardNums[0] < 3 || bp > Config.SMALL_CARD_MAP.get(outcard.getType())){
+                if (remainCardNums[0] < 3 || bp > Config.SMALL_CARD_MAP.get(outcard.getType())) {
                     return best;
                 }
 
@@ -338,7 +339,7 @@ public class ReceiveStrategy implements Strategy {
             if (s > Config.GOOD_CARDS_VALUE) {
                 return best;
             }
-            if (s - bs < CardArray.P[round]){
+            if (s - bs < CardArray.P[round]) {
                 return best;
             }
 
@@ -347,7 +348,7 @@ public class ReceiveStrategy implements Strategy {
                 if (best.getType() == outcard.getType() && best.getType() != CardType.ZHADAN && best.getType() != CardType.HUOJIAN && (best.getCards()[0] < 12 || (best.getCards()[0] - outcard.getCards()[0] < Config.MAX_CARDS_SPAN))) {
                     return best;
                 }
-            }else {
+            } else {
                 if (best.getType() == outcard.getType() && best.getType() != CardType.ZHADAN && best.getType() != CardType.HUOJIAN && (best.getCards()[0] < 12)) {
                     return best;
                 }
@@ -410,19 +411,19 @@ public class ReceiveStrategy implements Strategy {
 
     }
 
-    public OutCard zhaAndWin(int role,int[] cards, int[] remainCards, int[] remainCardNum,OutCard outCard) {
-        OutCard o = Strategy.findZhanDanOrHuoJian(cards,outCard);
-        if (o != null){
-            Strategy.removeCard(cards,EMPTY_CARDS,o,true);
-            OutCard oneHand = OutCardStrategy.oneHand(split.split(cards),o.getType() == CardType.ZHADAN?remainCardNum[role] - 4:remainCardNum[role] - 2);
-            if (oneHand!=null){
-                if (o.getType() == CardType.HUOJIAN || Strategy.randomFloat() > 0.3 || biggestProbability(role,remainCards,remainCardNum,o) > Config.SMALL_CARD){
-                    Strategy.removeCard(cards,EMPTY_CARDS,o,false);
+    public OutCard zhaAndWin(int role, int[] cards, int[] remainCards, int[] remainCardNum, OutCard outCard) {
+        OutCard o = Strategy.findZhanDanOrHuoJian(cards, outCard);
+        if (o != null) {
+            Strategy.removeCard(cards, EMPTY_CARDS, o, true);
+            OutCard oneHand = OutCardStrategy.oneHand(split.split(cards), o.getType() == CardType.ZHADAN ? remainCardNum[role] - 4 : remainCardNum[role] - 2);
+            if (oneHand != null) {
+                if (o.getType() == CardType.HUOJIAN || Strategy.randomFloat() > 0.3 || biggestProbability(role, remainCards, remainCardNum, o) > Config.SMALL_CARD) {
+                    Strategy.removeCard(cards, EMPTY_CARDS, o, false);
                     return o;
                 }
 
             }
-            Strategy.removeCard(cards,EMPTY_CARDS,o,false);
+            Strategy.removeCard(cards, EMPTY_CARDS, o, false);
         }
 
         return null;

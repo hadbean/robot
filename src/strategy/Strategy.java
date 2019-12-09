@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Random;
 
 public interface Strategy {
-
     CardSplit split = new CardSplit();
 
     int[] CARDS = new int[]{4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1};
@@ -242,6 +241,7 @@ public interface Strategy {
         }
         CardArray newCard = split.split(arr.cards);
 
+        int ememyCardNum = role == 0? Math.min(remainCardNum[1],remainCardNum[2]):remainCardNum[0];
         if (newCard.nDan > 0) {
             for (int i = 0; i < newCard.nDan; i++) {
                 OutCard o = OutCard.dan(newCard.dan[i]);
@@ -274,7 +274,7 @@ public interface Strategy {
                 if (bp > Config.SMALL_CARD_MAP.get(o.getType())) {
                     cg.bDuizi[cg.nbDuizi] = newCard.duizi[i];
                     cg.nbDuizi++;
-                    if (out == null) {
+                    if (ememyCardNum == 1 || out == null) {
                         out = o;
                     }
                 } else {
@@ -298,7 +298,7 @@ public interface Strategy {
             if (small.size() > 0) {
                 for (OutCard o : small) {
                     OutCard bg = findBiggestCardFromMe(role, split.split(cards), remainCards, remainCardNum, o);
-                    if (bg != null && biggestProbability(role,remainCards,remainCardNum,bg,true)  > Config.SMALL_CARD_MAP.get(bg.getType())) {
+                    if (bg != null && biggestProbability(role, remainCards, remainCardNum, bg, true) > Config.SMALL_CARD_MAP.get(bg.getType())) {
                         return o;
                     }
                 }
@@ -563,33 +563,18 @@ public interface Strategy {
      * @param force         是否一定要接，一定要接的话，会考虑炸弹和火箭，并且不管接了牌变坏的情况，否则不考虑
      * @return
      */
-    default List<OutCard> findBiggerCards(int[] cards, int remainCardNum, OutCard outCard, boolean force,boolean ignoreZha) {
+    default List<OutCard> findBiggerCards(int[] cards, int remainCardNum, OutCard outCard, boolean force, boolean ignoreZha) {
         List<OutCard> rs = new ArrayList<>();
         int outLength = outCard.getLength();
 
         int[] mainCard = outCard.getCards();
         CardType type = outCard.getType();
-        if (outCard.getType() == CardType.HUOJIAN) {
+        if (type == CardType.HUOJIAN) {
             return rs;
         }
-        if (force) {
-            if (!ignoreZha) {
-                int i = 0;
-                if (outCard.getType() == CardType.ZHADAN) {
-                    i = outCard.getCards()[0] + 1;
-                }
-                for (; i < 13; i++) {
-                    if (cards[i] == 4) {
-                        rs.add(OutCard.zhadan(i));
-                    }
-                }
-            }
-            if (cards[13] == 1 && cards[14] == 1) {
-                rs.add(OutCard.huojian());
-            }
-        }
+
         if (remainCardNum < outLength) {
-            return rs;
+
         } else {
 
             switch (type) {
@@ -694,6 +679,22 @@ public interface Strategy {
                 default:
                     break;
             }
+            if (force) {
+                if (!ignoreZha) {
+                    int i = 0;
+                    if (type == CardType.ZHADAN) {
+                        i = mainCard[0] + 1;
+                    }
+                    for (; i < 13; i++) {
+                        if (cards[i] == 4) {
+                            rs.add(OutCard.zhadan(i));
+                        }
+                    }
+                }
+                if (cards[13] == 1 && cards[14] == 1) {
+                    rs.add(OutCard.huojian());
+                }
+            }
             //
             if (rs.size() == 0) {
                 return rs;
@@ -781,7 +782,7 @@ public interface Strategy {
         return null;
     }
 
-    //带牌设置
+//带牌设置
 
     /**
      * @param cards
@@ -984,7 +985,7 @@ public interface Strategy {
             p = max * 1.0 / (max + num2);
         }
 
-        List<OutCard> bigger = findBiggerCards(remainingCards, max, outCard, force,true);
+        List<OutCard> bigger = findBiggerCards(remainingCards, max, outCard, force, true);
         if (bigger == null || bigger.size() == 0) {
             return 1;
         }

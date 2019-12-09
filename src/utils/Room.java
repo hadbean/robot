@@ -167,6 +167,7 @@ public class Room {
 
     public static void main(String[] args) {
 
+        long begin = System.currentTimeMillis();
         int[] wins = new int[3];
         Room room = new Room();
         int i = 1000000;
@@ -179,7 +180,7 @@ public class Room {
             System.out.println(i);
         }
         System.out.println("地主：" + wins[0] + "胜; 下家：" + wins[1] + "胜; 上家：" + wins[2] + "胜");
-
+        System.out.println(System.currentTimeMillis() - begin);
 
     }
 }

@@ -74,7 +74,7 @@ public class OutCardStrategy implements Strategy {
                     }
                 } else if (cards.nShunzi == 1) {
                     outCard = OutCard.shunzi(cards.shunzi[0]);
-                } else if (cards.nSantiao == 1 && cards.nEr == 2){
+                } else if (cards.nSantiao == 1 && cards.nEr == 2) {
                     outCard = OutCard.santiaoWithTail(cards.santiao[0], new int[]{12, 12});
                 }
                 break;
@@ -129,9 +129,9 @@ public class OutCardStrategy implements Strategy {
                 if (remainCardNum == 6) {
                     if (cards.nDan == 2) {
                         outCard = OutCard.zhadanWithTail(cards.zhadan[0], new int[]{cards.dan[0], cards.dan[1]});
-                    } else if (cards.nHuojian == 1){
+                    } else if (cards.nHuojian == 1) {
                         outCard = OutCard.zhadan(cards.zhadan[0]);
-                    }else {
+                    } else {
                         if (cards.nEr == 2) {
                             outCard = OutCard.zhadanWithTail(cards.zhadan[0], new int[]{12, 12});
                         } else {
@@ -145,7 +145,7 @@ public class OutCardStrategy implements Strategy {
                         outCard = OutCard.zhadanWithTail(cards.zhadan[0], new int[]{cards.duizi[0], cards.duizi[0], 12, 12});
                     }
                 }
-            }else if (cards.nZhadan == 2 && remainCardNum == 8) {
+            } else if (cards.nZhadan == 2 && remainCardNum == 8) {
                 return OutCard.zhadan(cards.zhadan[0]);
             }
         }
@@ -204,13 +204,13 @@ public class OutCardStrategy implements Strategy {
         List<OutCard> outs = new ArrayList<>(3);
         if (cards.nFeiji > 0) {
             OutCard o1 = OutCard.feiji(cards.feiji[0]);
-            Strategy.removeCard(cards.cards,EMPTY_CARDS,o1,true);
+            Strategy.removeCard(cards.cards, EMPTY_CARDS, o1, true);
             if (findTail(cards.cards, o1, 1, cards.feiji[0][1], false) || findTail(cards.cards, o1, 2, cards.feiji[0][1], false)) {
-                Strategy.removeCard(cards.cards,EMPTY_CARDS,o1,false);
+                Strategy.removeCard(cards.cards, EMPTY_CARDS, o1, false);
 //                Strategy.removeFrom(o1.getTail(),cards.cards,true);
                 o1.setType(CardType.FEIJIWITHTAIL);
-            }else {
-                Strategy.removeCard(cards.cards,EMPTY_CARDS,o1,false);
+            } else {
+                Strategy.removeCard(cards.cards, EMPTY_CARDS, o1, false);
             }
 //            int mbp = 0;
 //            if (cards.nDan >= cards.feiji[0][1]) {
@@ -318,7 +318,8 @@ public class OutCardStrategy implements Strategy {
 
         return out;
     }
-    public OutCard fewPoke(int role,CardType cards, int[] remainCardNum){
+
+    public OutCard fewPoke(int role, CardType cards, int[] remainCardNum) {
 
         return null;
     }
@@ -338,7 +339,7 @@ public class OutCardStrategy implements Strategy {
 
     /**
      * @param cards
-     * @param role 1 地主下家 2 地主上家
+     * @param role  1 地主下家 2 地主上家
      * @return 0 出其它 1 出单
      */
     public OutCard enemyLastOne(CardArray cards, int role, int[] remainCardNum) {
@@ -349,7 +350,7 @@ public class OutCardStrategy implements Strategy {
             }
             if (cards.nDuizi > 0 && cards.duizi[0] > 1 && cards.nDan > 2) {
 
-                return OutCard.dan(cards.dan[1]);
+                return OutCard.dan(cards.dan[cards.nDan - 2]);
             }
             return null;
         } else if (role == 2) {
@@ -378,21 +379,21 @@ public class OutCardStrategy implements Strategy {
             } else {
                 o = OutCard.santiao(cards.santiao[0]);
             }
-            if (o != null){
-                o.setBp(biggestProbability(role, remainingCards,  remainCardNum, o,false));
-                Strategy.removeCard(cards.cards,EMPTY_CARDS,o,true);
+            if (o != null) {
+                o.setBp(biggestProbability(role, remainingCards, remainCardNum, o, false));
+                Strategy.removeCard(cards.cards, EMPTY_CARDS, o, true);
                 o.setScore(split.split(cards.cards).score());
-                Strategy.removeCard(cards.cards,EMPTY_CARDS,o,false);
+                Strategy.removeCard(cards.cards, EMPTY_CARDS, o, false);
                 outs.add(o);
             }
         }
 
         if (cards.nDan > 0) {
             OutCard o = OutCard.dan(cards.dan[0]);
-            o.setBp(biggestProbability(role, remainingCards,  remainCardNum, o,false));
-            Strategy.removeCard(cards.cards,EMPTY_CARDS,o,true);
+            o.setBp(biggestProbability(role, remainingCards, remainCardNum, o, false));
+            Strategy.removeCard(cards.cards, EMPTY_CARDS, o, true);
             o.setScore(split.split(cards.cards).score());
-            Strategy.removeCard(cards.cards,EMPTY_CARDS,o,false);
+            Strategy.removeCard(cards.cards, EMPTY_CARDS, o, false);
             outs.add(OutCard.dan(cards.dan[0]));
         }
         if (cards.nDuizi > 0) {
@@ -402,7 +403,7 @@ public class OutCardStrategy implements Strategy {
         OutCard out = null;
 
         if (!outs.isEmpty()) {
-            if (outs.size() == 1){
+            if (outs.size() == 1) {
                 return outs.get(0);
             }
             double minS = Integer.MAX_VALUE;
@@ -413,26 +414,26 @@ public class OutCardStrategy implements Strategy {
             double minC = Integer.MAX_VALUE;
             double maxC = Integer.MIN_VALUE;
             for (OutCard o : outs) {
-                o.setBp(biggestProbability(role, remainingCards,  remainCardNum, o,false));
-                Strategy.removeCard(cards.cards,EMPTY_CARDS,o,true);
+                o.setBp(biggestProbability(role, remainingCards, remainCardNum, o, false));
+                Strategy.removeCard(cards.cards, EMPTY_CARDS, o, true);
                 o.setScore(split.split(cards.cards).score());
-                Strategy.removeCard(cards.cards,EMPTY_CARDS,o,false);
-                if (o.getCards()[0] > maxC){
+                Strategy.removeCard(cards.cards, EMPTY_CARDS, o, false);
+                if (o.getCards()[0] > maxC) {
                     maxC = o.getCards()[0];
                 }
-                if (o.getBp() > maxBp){
+                if (o.getBp() > maxBp) {
                     maxBp = o.getBp();
                 }
-                if (o.getScore() > maxS){
+                if (o.getScore() > maxS) {
                     maxS = o.getScore();
                 }
-                if (o.getCards()[0] < minC){
+                if (o.getCards()[0] < minC) {
                     minC = o.getCards()[0];
                 }
-                if (o.getBp() < minBp){
+                if (o.getBp() < minBp) {
                     minBp = o.getBp();
                 }
-                if (o.getScore() < maxS){
+                if (o.getScore() < maxS) {
                     minS = o.getScore();
                 }
             }
@@ -440,29 +441,29 @@ public class OutCardStrategy implements Strategy {
 
             for (OutCard o : outs) {
                 int k = 0;
-                if (o.getScore()  == maxS){
-                    k +=2;
-                }else if (o.getScore()  > minS){
-                    k ++;
+                if (o.getScore() == maxS) {
+                    k += 2;
+                } else if (o.getScore() > minS) {
+                    k++;
                 }
-                if (o.getBp()  == minBp){
-                    k +=2;
-                }else if (o.getBp()  < maxBp){
-                    k ++;
+                if (o.getBp() == minBp) {
+                    k += 2;
+                } else if (o.getBp() < maxBp) {
+                    k++;
                 }
-                if (o.getCards()[0]  == minC){
-                    k +=2;
-                }else if (o.getCards()[0]  < minC){
-                    k ++;
+                if (o.getCards()[0] == minC) {
+                    k += 2;
+                } else if (o.getCards()[0] < minC) {
+                    k++;
                 }
-                if (k > max){
+                if (k > max) {
                     max = k;
-                    if (fewHand && out != null && out.getType() == CardType.DAN && o.getType() == CardType.DAN){
+                    if (fewHand && out != null && out.getType() == CardType.DAN && o.getType() == CardType.DAN) {
                         continue;
                     }
                     out = o;
-                }else if (k == max){
-                    if (Strategy.randomFloat() > 0.5){
+                } else if (k == max) {
+                    if (Strategy.randomFloat() > 0.5) {
                         out = o;
                     }
                 }
