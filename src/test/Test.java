@@ -10,6 +10,9 @@ public class Test {
 
     public static void main(String[] args) {
 
-        System.out.println(CardArray.P.length);
+        System.out.println(7140*1.0/7770);
+        System.out.println(6545*1.0/7770);
+        System.out.println(5984*1.0/7770);
+        System.out.println(5456*1.0/7770);
     }
 }

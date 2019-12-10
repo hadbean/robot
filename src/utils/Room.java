@@ -7,12 +7,15 @@ import model.Player;
 import strategy.Strategy;
 import test.CardSet;
 
+import java.util.Random;
+
 public class Room {
 
     static int[] CARDS = new int[]{4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1};
 
     private int[] alreadyOutCards;
     private int[] remainingCardNum;
+    static Statistics stat = new Statistics();
 
 
     private Player[] players;
@@ -23,7 +26,71 @@ public class Room {
         this.players = ps;
     }
 
-    public void init() {
+    public boolean initJDZ() {
+        Random r = new Random();
+        alreadyOutCards = new int[15];
+        remainingCardNum = new int[]{20, 17, 17};
+        players = new Player[3];
+        CardSet set = new CardSet();
+        int[][] cardGroup = set.shuffle();
+        int[] dp = new int[3];
+        int k = 0;
+        for (int i = 0; i < 3; i++) {
+            int[] cards = cardGroup[i];
+            int n = 0;
+            for (int j = 0; j < cards.length; j++) {
+                n += cards[j];
+            }
+            if (n == 20){
+                while (k < 3){
+                    int idx = r.nextInt(15);
+                    if (cards[idx] > 0){
+                        dp[k] = idx;
+                        cards[idx] --;
+                        k ++;
+                    }
+                }
+            }
+        }
+        players[0] = new Player(cardGroup[0], 0, 1);
+        players[1] = new Player(cardGroup[1], 1, 1);
+        players[2] = new Player(cardGroup[2], 2, 1);
+        int round = r.nextInt(3);
+        int s = 0;
+        int who = 0;
+        for (int i = 0; i < 3; i++) {
+            int s2 = players[round % 3].jiaoDiZhu(s);
+            if (s2 > s){
+                s = s2;
+                who = round % 3;
+            }
+            if (s == 3){
+                break;
+            }
+        }
+        stat.n ++;
+        if (s > 0) {
+
+            System.out.println(who + "号抢得地主");
+            CardArray rs = new CardSplit().split(players[who].getCards());
+            System.out.println(rs.score() +" \t" + rs.NHand +" \t" + rs.maxCardNum());
+            Strategy.removeFrom(dp,players[who].getCards(),false);
+            stat.jdz[who] ++;
+            if (who != 0){
+                Player p = players[who];
+                p.setRole(0);
+                players[0].setRole(who);
+                players[who] = players[0];
+                players[0] = p;
+            }
+            return true;
+        }else {
+            Strategy.removeFrom(dp,players[0].getCards(),false);
+            return false;
+        }
+    }
+
+    public boolean init() {
         alreadyOutCards = new int[15];
         remainingCardNum = new int[]{20, 17, 17};
         players = new Player[3];
@@ -45,7 +112,7 @@ public class Room {
                 }
             }
         }
-
+        return true;
     }
 
     public int play(boolean debug) {
@@ -55,6 +122,11 @@ public class Room {
         String cardStr = cardDesc(players[0], null) + "\n" + cardDesc(players[1], null) + "\n" + cardDesc(players[2], null) + "\n";
         try {
             Player p = players[round % 3];
+            CardArray rss = split.split(p.getCards());
+            int score = rss.score();
+            int hands = rss.NHand;
+            int maxNum = rss.maxCardNum();
+
             outCard = p.out(round / 3, remainingCardNum, alreadyOutCards, outCard);
             if (outCard.getType() == CardType.ZHADAN){
                 throw new RuntimeException("出牌混乱");
@@ -63,6 +135,9 @@ public class Room {
             Strategy.removeCard(p.getCards(), alreadyOutCards, outCard, true);
             remainingCardNum[p.getRole()] -= outCard.getLength();
             round++;
+            if (isOver(p.getCards())){
+                return p.getRole();
+            }
 
 
             while (true) {
@@ -121,6 +196,12 @@ public class Room {
                     if (n != 1) {
                         throw new RuntimeException("牌的数量统计错误");
                     }
+                    if (p.getRole() == 0){
+                        stat.maxCard += maxNum;
+                        stat.hands += hands;
+                        stat.score += score;
+                        stat.n += 1;
+                    }
 
                     return p.getRole();
                 }
@@ -170,17 +251,24 @@ public class Room {
         long begin = System.currentTimeMillis();
         int[] wins = new int[3];
         Room room = new Room();
-        int i = 1000000;
+        int i = 100000;
         while (i > 0) {
-            room.init();
-            wins[room.play(true)] += 1;
+//            room.init();
+            if (room.initJDZ()) {
+                wins[room.play(true)] += 1;
 
-            System.out.println("\n\n");
-            i--;
-            System.out.println(i);
+                System.out.println("\n\n");
+                i--;
+                System.out.println(i);
+            }
+
         }
         System.out.println("地主：" + wins[0] + "胜; 下家：" + wins[1] + "胜; 上家：" + wins[2] + "胜");
         System.out.println(System.currentTimeMillis() - begin);
 
+
+
+//        System.out.println(stat.toString());
+        System.out.println(stat.n + "\t" + stat.jdz[0]+ "\t" + stat.jdz[1]+ "\t" + stat.jdz[2]);
     }
 }

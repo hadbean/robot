@@ -4,6 +4,7 @@ import config.Config;
 import constant.CardType;
 import strategy.OutCardStrategy;
 import strategy.ReceiveStrategy;
+import strategy.Strategy;
 import utils.CardSplit;
 
 import java.util.List;
@@ -38,34 +39,63 @@ public class Player {
             return 0;
         }
         OutCardStrategy strategy = new OutCardStrategy(0);
-        CardArray arr = new CardSplit().split(cards);
-        int maxCard = 0;
-        maxCard += arr.nHuojian + arr.nZhadan + arr.nEr;
-        if (arr.nHuojian == 0) {
-            maxCard += cards[13];
-            maxCard += cards[14];
-        }
-        if (cards[12] == 1) {
-            maxCard += 1;
-        }
-        maxCard += cards[11] / 2;
-        if (maxCard > 5) {
-            return 3;
-        }
-        int score = arr.score();
-        if (score > 10) {
-            return 3;
-        }
-        if (arr.NHand <= 6 && maxCard > 2) {
-            return 3;
-        }
-        if (arr.NHand > 6 && arr.NHand <= 8 && maxCard > 4){
-            return 3;
+
+        int score = callScore();
+        if (score > s) {
+            return s;
         }
 
         int[] remainingCards = strategy.remainingCardsExceptMe(cards, new int[15]);
-        int k = 0;
-//        if (arr.)
+
+        for (int i = 0; i < 12; i++) {
+            if (remainingCards[i] > 0) {
+                Strategy.removeFrom(new int[]{i}, cards, false);
+                score = callScore();
+                if (score > s) {
+                    if (Math.random() > Config.JDZ[remainingCards[i] - 1]) {
+                        Strategy.removeFrom(new int[]{i}, cards, true);
+                        return score;
+                    }
+                }
+                Strategy.removeFrom(new int[]{i}, cards, true);
+            }
+        }
+
+        return 0;
+    }
+
+    private int callScore() {
+
+        CardArray arr = new CardSplit().split(cards);
+
+        int maxCard = arr.maxCardNum();
+        if (cards[12] == 1) {
+            maxCard += 1;
+        }
+        if (maxCard > 5) {
+            return 3;
+        }
+        if (maxCard < 3) {
+            return 0;
+        }
+        int score = arr.score();
+        if (score > 0) {
+            return 3;
+        }
+
+        if (arr.NHand == 5) {
+            return 1;
+        } else if (arr.NHand == 4) {
+            return 2;
+        } else if (arr.NHand < 4) {
+            return 3;
+        }
+
+
+        if (arr.NHand - maxCard < 3) {
+            return Math.max(0,3 - arr.NHand + maxCard);
+        }
+
         return 0;
     }
 

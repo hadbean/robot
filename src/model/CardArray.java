@@ -110,6 +110,19 @@ public class CardArray {
         return s - P[round]*N;
     }
 
+    public int maxCardNum(){
+        int maxCard = 0;
+        maxCard += nHuojian + nZhadan + nEr;
+        if (nHuojian == 0) {
+            maxCard += cards[13];
+            maxCard += cards[14];
+        }
+        if (cards[12] == 1) {
+            maxCard += 1;
+        }
+        maxCard += cards[11] / 2;
+        return maxCard;
+    }
 
 
     public void addUsage(int n) {

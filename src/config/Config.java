@@ -7,6 +7,8 @@ import java.util.Map;
 
 public class Config {
 
+    public static final double[] JDZ = {0.918918918918919,0.8423423423423423,0.7701415701415701,0.7021879021879022};
+    public static final String JDZ_EXP = "缺一牌的情况下，叫牌的概率";
     /**
      * 我是农民时
      */
