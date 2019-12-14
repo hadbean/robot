@@ -72,8 +72,14 @@ public class Room {
         if (s > 0) {
 
             System.out.println(who + "号抢得地主");
-            CardArray rs = new CardSplit().split(players[who].getCards());
-            System.out.println(rs.score() +" \t" + rs.NHand +" \t" + rs.maxCardNum());
+            CardSplit split = new CardSplit();
+            split.setRound(40);
+            CardArray rs = split.split(players[who].getCards());
+            System.out.println(rs.score() +" \t" + rs.hands +" \t" + rs.maxCardNum());
+            stat.score += rs.score();
+            stat.hands += rs.hands;
+            stat.maxCard += rs.maxCardNum();
+            stat.dzs += s;
             Strategy.removeFrom(dp,players[who].getCards(),false);
             stat.jdz[who] ++;
             if (who != 0){
@@ -124,7 +130,7 @@ public class Room {
             Player p = players[round % 3];
             CardArray rss = split.split(p.getCards());
             int score = rss.score();
-            int hands = rss.NHand;
+            int hands = rss.hands;
             int maxNum = rss.maxCardNum();
 
             outCard = p.out(round / 3, remainingCardNum, alreadyOutCards, outCard);
@@ -251,18 +257,19 @@ public class Room {
         long begin = System.currentTimeMillis();
         int[] wins = new int[3];
         Room room = new Room();
+        int[] call = new int[2];
         int i = 100000;
         while (i > 0) {
 //            room.init();
             if (room.initJDZ()) {
-                wins[room.play(true)] += 1;
-
-                System.out.println("\n\n");
-                i--;
-                System.out.println(i);
+//                wins[room.play(true)] += 1;
+                call[0] ++;
+                i --;
+            }else {
+                call[1] ++;
             }
-
         }
+        System.out.println("JDZ: " + call[0] +"," + call[1] +" p = " + (1.0*call[0]/(call[0] + call[1])));
         System.out.println("地主：" + wins[0] + "胜; 下家：" + wins[1] + "胜; 上家：" + wins[2] + "胜");
         System.out.println(System.currentTimeMillis() - begin);
 
@@ -270,5 +277,7 @@ public class Room {
 
 //        System.out.println(stat.toString());
         System.out.println(stat.n + "\t" + stat.jdz[0]+ "\t" + stat.jdz[1]+ "\t" + stat.jdz[2]);
+        System.out.println(stat.n + "\t" + stat.jdz[0]+ "\t" + stat.jdz[1]+ "\t" + stat.jdz[2]);
+        System.out.println(stat.n + "\t" + (stat.score/100000)+ "\t" + (stat.hands/100000)+ "\t" + (stat.maxCard/100000)+ "\t" + (stat.dzs/100000));
     }
 }

@@ -2,7 +2,6 @@ package test;
 
 import model.OutCard;
 import model.Player;
-import strategy.Strategy;
 import utils.Room;
 
 import java.util.HashMap;
@@ -17,6 +16,11 @@ public class PlayTest {
     }
     public static void main(String[] args) {
 
+//        String pref = "0:JOKER1,2,2,A,K,Q,J,10,10,10,9,8,8,7,6,6,5,4,3,3,\tPASS\n" +
+//                "1:JOKER2,A,A,K,Q,J,10,8,7,7,6,5,5,5,4,4,3,\tPASS\n" +
+//                "2:2,2,2,2,A,K,K,Q,Q,9,9,9,8,7,6,4,3,\tPASS";
+
+
         /*
         地主:3,3,3,4,4,5,5,6,6,7,7,7,9,10,J,Q,Q,K,2,2,	PASS
 主下:3,4,4,5,8,8,9,10,10,J,J,Q,A,A,A,2,JOKER1,	PASS
@@ -26,9 +30,9 @@ public class PlayTest {
         String s1 = "3,5,5,6,7,9,9,J,J,K,K,K,2,2,2,JOKER1,JOKER2";
         String s2 = "4,4,4,5,5,6,7,8,8,9,10,J,Q,Q,K,A,A";
 
-        String s = "地主:4,4,5,5,6,6,7,7,8,8,9,9,10,10,J,J,Q,Q,K,K,\tPASS\n" +
-                "主下:3,3,4,5,6,7,8,9,10,10,J,J,K,A,2,2,JOKER2,\tPASS\n" +
-                "主上:3,3,4,5,6,7,8,9,Q,Q,K,A,A,A,2,2,JOKER1,\tPASS";
+        String s = "0:JOKER1,2,2,A,K,Q,J,10,10,10,9,8,8,7,6,6,5,4,3,3,\tPASS\n" +
+                "1:JOKER2,A,A,K,Q,J,10,8,7,7,6,5,5,5,4,4,3,\tPASS\n" +
+                "2:2,2,A,K,K,Q,Q,J,J,9,9,9,8,7,6,4,3,\tPASS";
         String[] ss = s.split("\n");
         if (ss.length == 3) {
             for (int i = 0; i < s.split("\n").length; i++) {

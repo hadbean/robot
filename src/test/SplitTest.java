@@ -24,7 +24,7 @@ public class SplitTest {
         CardArray rs = new CardSplit().split(cards);
         rs.score();
         System.out.println(rs);
-        System.out.println(rs.score() + " \t" + rs.NHand  + " \t" + rs.maxCardNum());
+        System.out.println(rs.score() + " \t" + rs.hands  + " \t" + rs.maxCardNum());
 
     }
 }

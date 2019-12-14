@@ -10,6 +10,8 @@ public class Statistics {
     public int hands;
     public int maxCard;
 
+    public int dzs;
+
 
     @Override
     public String toString() {

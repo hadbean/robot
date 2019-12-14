@@ -4,7 +4,7 @@ import config.Config;
 
 public class CardArray {
 
-    public static int[] P = {6, 6, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2};
+    public static int[] P = {6, 6, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
     public int[] cards;
     public int round;
     private int usage;
@@ -38,7 +38,7 @@ public class CardArray {
     public int nDuizi;
 
 
-    public int NHand = 0;
+    public int hands = 0;
 
     public int score() {
         int s = 0;
@@ -106,11 +106,12 @@ public class CardArray {
             s += 12;
         }
         s += nEr * 5;
-        NHand = N;
-        return s - P[round]*N;
+        hands = N;
+
+        return round < P.length ? s - P[round] * N : s;
     }
 
-    public int maxCardNum(){
+    public int maxCardNum() {
         int maxCard = 0;
         maxCard += nHuojian + nZhadan + nEr;
         if (nHuojian == 0) {

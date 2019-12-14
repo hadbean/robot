@@ -11,10 +11,11 @@ import java.util.List;
 
 public class Player {
 
+
     private String id;
 
     private int[] cards;
-    // 0 地主，1，地主下 2地主上
+    // 0 地主，1 地主下 2 地主上
     private int role;
     private int type;
     private int minCardFriend;
@@ -30,19 +31,40 @@ public class Player {
     //主动出牌
 
     /**
+     *
+     * @param dipai  3张底牌
+     * @return true 加倍
+     */
+    public boolean jiabei(int[] dipai){
+        int score = callScore();
+        if (score == 3){
+            CardArray arr = new CardSplit().split(cards);
+            if (arr.hands <= 3 && arr.maxCardNum() >=5){
+                return true;
+            }else {
+                OutCardStrategy strategy = new OutCardStrategy(1);
+                int[] remainingCards = strategy.remainingCardsExceptMe(cards, new int[15]);
+                if (strategy.allBig2(role,cards,remainingCards,new int[]{20,17,17})!= null){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    /**
      * @param s 其他人叫的分
      * @return
      */
     public int jiaoDiZhu(int s) {
 
-        if (s > 3) {
+        if (s >= 3) {
             return 0;
         }
         OutCardStrategy strategy = new OutCardStrategy(0);
 
         int score = callScore();
         if (score > s) {
-            return s;
+            return score;
         }
 
         int[] remainingCards = strategy.remainingCardsExceptMe(cards, new int[15]);
@@ -66,7 +88,9 @@ public class Player {
 
     private int callScore() {
 
-        CardArray arr = new CardSplit().split(cards);
+        CardSplit split = new CardSplit();
+        split.setRound(30);
+        CardArray arr = split.split(cards);
 
         int maxCard = arr.maxCardNum();
         if (cards[12] == 1) {
@@ -75,25 +99,29 @@ public class Player {
         if (maxCard > 5) {
             return 3;
         }
+        int score = arr.score();
+        if (score  > 0) {
+            return 3;
+        }
         if (maxCard < 3) {
+            if (arr.hands <= 4){
+
+                return 1;
+            }
             return 0;
         }
-        int score = arr.score();
-        if (score > 0) {
-            return 3;
-        }
 
-        if (arr.NHand == 5) {
+        if (arr.hands == 5) {
             return 1;
-        } else if (arr.NHand == 4) {
+        } else if (arr.hands == 4) {
             return 2;
-        } else if (arr.NHand < 4) {
+        } else if (arr.hands < 4) {
             return 3;
         }
 
 
-        if (arr.NHand - maxCard < 3) {
-            return Math.max(0,3 - arr.NHand + maxCard);
+        if (arr.hands - maxCard < 3) {
+            return Math.max(0,3 - arr.hands + maxCard);
         }
 
         return 0;
@@ -156,7 +184,7 @@ public class Player {
                 if (rs.nDan > 0) {
                     out = OutCard.dan(rs.dan[0]);
                 } else if (rs.nDuizi > 0) {
-                    out = OutCard.duizi(rs.duizi[0]);
+                    out = OutCard.dan(rs.duizi[0]);
                 }
             }
             if (out != null) {
@@ -231,13 +259,16 @@ public class Player {
         }
 
 //        int emeryCardNum = role == 0 ? Math.min(remainingCardNum[1], remainingCardNum[2]) : remainingCardNum[0];
-
+        if (role == 1 && outCard.getRole() == 2 && remainingCardNum[2] == 1){
+            return strategy.letFriend(cards, outCard, Config.MIN_EXCEPT_1, outs);
+        }
         int[] remainCards = strategy.remainingCardsExceptMe(cards, alreadyOutCards);
 
         out = strategy.zhaAndWin(role, cards, remainCards, remainingCardNum, outCard);
         if (out != null) {
             return out;
         }
+
 
         out = strategy.jieAndWin(role, cards, remainCards, outs, remainingCardNum);
 
@@ -264,7 +295,6 @@ public class Player {
                 return out;
             }
         }
-
         return strategy.normal(cards, role, outCard, remainCards, remainingCardNum, outs);
     }
 

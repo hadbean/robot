@@ -131,7 +131,7 @@ public class ReceiveStrategy implements Strategy {
                 return null;
             }
             case SHUNZI: {
-                if (rs.nShunzi > 0 && rs.shunzi[0][0] > outCard.getCards()[0]) {
+                if (rs.nShunzi > 0 && rs.shunzi[0][0] > outCard.getCards()[0] && rs.shunzi[0][1] == outCard.getCards()[1]) {
                     return OutCard.shunzi(rs.shunzi[0]);
                 }
                 return null;

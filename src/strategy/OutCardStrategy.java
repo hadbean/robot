@@ -1,9 +1,7 @@
 package strategy;
 
-import config.Config;
 import constant.CardType;
 import model.CardArray;
-import model.CardGraph;
 import model.OutCard;
 
 import java.util.ArrayList;
@@ -331,7 +329,7 @@ public class OutCardStrategy implements Strategy {
             return false;
         }
         cards.score();
-        if (cards.NHand < 4) {
+        if (cards.hands < 4) {
             return true;
         }
         return false;
