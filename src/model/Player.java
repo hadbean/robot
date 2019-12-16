@@ -31,26 +31,26 @@ public class Player {
     //主动出牌
 
     /**
-     *
-     * @param dipai  3张底牌
+     * @param dipai 3张底牌
      * @return true 加倍
      */
-    public boolean jiabei(int[] dipai){
+    public boolean jiabei(int[] dipai) {
         int score = callScore();
-        if (score == 3){
+        if (score == 3) {
             CardArray arr = new CardSplit().split(cards);
-            if (arr.hands <= 3 && arr.maxCardNum() >=5){
+            if (arr.hands <= 3 && arr.maxCardNum() >= 5) {
                 return true;
-            }else {
+            } else {
                 OutCardStrategy strategy = new OutCardStrategy(1);
                 int[] remainingCards = strategy.remainingCardsExceptMe(cards, new int[15]);
-                if (strategy.allBig2(role,cards,remainingCards,new int[]{20,17,17})!= null){
+                if (strategy.allBig2(role, cards, remainingCards, new int[]{20, 17, 17}) != null) {
                     return true;
                 }
             }
         }
         return false;
     }
+
     /**
      * @param s 其他人叫的分
      * @return
@@ -100,28 +100,38 @@ public class Player {
             return 3;
         }
         int score = arr.score();
-        if (score  > 0) {
+        if (score > 0) {
             return 3;
         }
         if (maxCard < 3) {
-            if (arr.hands <= 4){
+            if (arr.hands <= 4) {
 
                 return 1;
             }
             return 0;
         }
 
-        if (arr.hands == 5) {
-            return 1;
-        } else if (arr.hands == 4) {
-            return 2;
-        } else if (arr.hands < 4) {
-            return 3;
+        if (maxCard == 3 || maxCard == 4) {
+            if (arr.hands == 5) {
+                return 1;
+            } else if (arr.hands == 4) {
+                return 2;
+            } else if (arr.hands < 4) {
+                return 3;
+            }
+        }
+        if (maxCard == 5){
+            if (arr.hands <= 5){
+                return 3;
+            }else if (arr.hands <= 6){
+                return 2;
+            }else {
+                return 1;
+            }
         }
 
-
         if (arr.hands - maxCard < 3) {
-            return Math.max(0,3 - arr.hands + maxCard);
+            return Math.max(0, 3 - arr.hands + maxCard);
         }
 
         return 0;
@@ -227,6 +237,11 @@ public class Player {
             return outSL;
         }
 
+        if (fewHand == false && outCard != null){
+            if (outCard.getRole() == role && outCard.getType() == CardType.DAN){
+                fewHand = true;
+            }
+        }
         out = strategy.smallFirst(rs, role, remainingCards, remainingCardNum, fewHand);
         if (out == null && outSL == null) {
             throw new RuntimeException("没法主动出牌异常");
@@ -259,7 +274,7 @@ public class Player {
         }
 
 //        int emeryCardNum = role == 0 ? Math.min(remainingCardNum[1], remainingCardNum[2]) : remainingCardNum[0];
-        if (role == 1 && outCard.getRole() == 2 && remainingCardNum[2] == 1){
+        if (role == 1 && outCard.getRole() == 2 && remainingCardNum[2] == 1) {
             return strategy.letFriend(cards, outCard, Config.MIN_EXCEPT_1, outs);
         }
         int[] remainCards = strategy.remainingCardsExceptMe(cards, alreadyOutCards);
@@ -277,13 +292,15 @@ public class Player {
             return out;
         }
 
-        if (role == 2 && remainingCardNum[0] == 1 && outCard.getType() == CardType.DAN && outCard.getRole() == 1) {
-            out = strategy.enemyLastOne(role, cards, outCard.getCards(), remainCards, remainingCardNum);
+        int ememyNum = role == 0 ? Math.min(remainingCardNum[1], remainingCardNum[2]) : remainingCardNum[1];
+        if (ememyNum == 1 && outCard.getType() == CardType.DAN) {
+            out = strategy.enemyLastOne(role, cards, outCard, remainCards, remainingCardNum, outs);
             if (out != null) {
                 out.setMode("enemyLastOne");
                 return out;
             }
         }
+
         //只剩两牌
 
         //队友只剩下一张牌，且在我下家

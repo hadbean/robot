@@ -165,6 +165,7 @@ public class ReceiveStrategy implements Strategy {
     //接完该牌后，能赢
     public OutCard jieAndWin(int role, int[] cards, int[] remainCards, List<OutCard> outCards, int[] remainingCardNum) {
 
+        int ememyNum = role == 0 ? Math.min(remainingCardNum[1], remainingCardNum[2]) : remainingCardNum[1];
         for (OutCard x : outCards) {
             Strategy.removeCard(cards, EMPTY_CARDS, x, true);
             double bp = biggestProbability(role, remainCards, remainingCardNum, x);
@@ -174,7 +175,7 @@ public class ReceiveStrategy implements Strategy {
                     Strategy.removeCard(cards, EMPTY_CARDS, x, false);
                     return x;
                 }
-            } else {
+            } else if (ememyNum > 1 || x.getType() != CardType.DAN) {
                 CardArray arr = split.split(cards);
                 OutCard o = findBiggestCardFromMe(role, arr, remainCards, remainingCardNum, x);
                 if (o != null) {
@@ -204,28 +205,44 @@ public class ReceiveStrategy implements Strategy {
      * @return
      */
 
-    public OutCard enemyLastOne(int role, int[] cards, int[] outCard, int[] remainCards,int[] remainingCardNum) {
+    public OutCard enemyLastOne(int role, int[] cards, OutCard outCard, int[] remainCards, int[] remainingCardNum, List<OutCard> outs) {
 
+        if (role == 2) {
+            if (outCard.getRole() == 0 || biggestProbability(2, remainCards, remainingCardNum, outCard) < Config.SMALL_CARD_MAP.get(CardType.DAN)) {
 
-        int i = canBiggerThanMe(outCard, CardType.DAN, cards, 1);
-        if (i == 1) {
-            CardArray rs = split.split(cards);
-            if (rs.nDan > 0) {
-                for (int j = 0; j < rs.nDan; j++) {
-                    if (rs.dan[j] > outCard[0] && canBiggerThanMe(new int[]{rs.dan[j]}, CardType.DAN, remainCards, 1) == 0) {
-                        return OutCard.dan(rs.dan[j]);
+                CardArray rs = split.split(cards);
+                if (rs.nDan > 0) {
+                    for (int j = 0; j < rs.nDan; j++) {
+                        if (rs.dan[j] > outCard.getCards()[0] && canBiggerThanMe(new int[]{rs.dan[j]}, CardType.DAN, remainCards, 1) == 0) {
+                            return OutCard.dan(rs.dan[j]);
+                        }
+                    }
+                }
+                if (rs.nEr > 1) {
+                    if (canBiggerThanMe(new int[]{12}, CardType.DAN, remainCards, 1) == 0) {
+                        return OutCard.dan(12);
+                    }
+                }
+                if (rs.nZhadan > 0 || rs.nHuojian > 0) {
+                    OutCard tmp = allBig2(role, cards, remainCards, remainingCardNum);
+                    if (tmp != null) {
+                        return rs.nZhadan > 0 ? OutCard.zhadan(rs.zhadan[0]) : OutCard.huojian();
+                    }
+                }
+                if (rs.nDan > 0 && rs.dan[rs.nDan - 1] > outCard.getCards()[0]) {
+                    if (rs.dan[rs.nDan - 1] < 11) {
+                        if (rs.nDuizi > 0 && rs.duizi[rs.nDuizi - 1] == 11) {
+                            return OutCard.dan(11);
+                        }
+                        return OutCard.dan(rs.dan[rs.nDan - 1]);
                     }
                 }
             }
-            if (rs.nEr > 1) {
-                if (canBiggerThanMe(new int[]{12}, CardType.DAN, remainCards, 1) == 0) {
-                    return OutCard.dan(12);
-                }
-            }
-            if (rs.nZhadan > 0 || rs.nHuojian > 0) {
-                OutCard tmp = allBig2(role, cards, remainCards, remainingCardNum);
-                if (tmp != null) {
-                    return rs.nZhadan > 0 ? OutCard.zhadan(rs.zhadan[0]) : OutCard.huojian();
+        } else if (role == 0) {
+            for (int i = outs.size() - 1; i >= 0; i--) {
+                OutCard o = outs.get(i);
+                if (o.getType() == CardType.DAN) {
+                    return o;
                 }
             }
         }

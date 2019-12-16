@@ -262,7 +262,7 @@ public class Room {
         while (i > 0) {
 //            room.init();
             if (room.initJDZ()) {
-//                wins[room.play(true)] += 1;
+                wins[room.play(true)] += 1;
                 call[0] ++;
                 i --;
             }else {

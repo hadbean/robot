@@ -343,7 +343,7 @@ public class OutCardStrategy implements Strategy {
     public OutCard enemyLastOne(CardArray cards, int role, int[] remainCardNum) {
 
         if (role == 1) {
-            if (remainCardNum[2] == 2 && cards.nDuizi > 0) {
+            if (remainCardNum[2] < 4 && cards.nDuizi > 0) {
                 return OutCard.duizi(cards.duizi[0]);
             }
             if (cards.nDuizi > 0 && cards.duizi[0] > 1 && cards.nDan > 2) {

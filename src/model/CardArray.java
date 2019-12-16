@@ -1,6 +1,7 @@
 package model;
 
 import config.Config;
+import utils.CardSplit;
 
 public class CardArray {
 
@@ -112,8 +113,8 @@ public class CardArray {
     }
 
     public int maxCardNum() {
-        int maxCard = 0;
-        maxCard += nHuojian + nZhadan + nEr;
+        int maxCard = nHuojian * 2 + nZhadan + nEr;
+
         if (nHuojian == 0) {
             maxCard += cards[13];
             maxCard += cards[14];
@@ -140,7 +141,9 @@ public class CardArray {
 
     public static void main(String[] args) {
 
-//        ByteBuffer.allocate(100)
+            int[] cards = {0,0,1,2,3,2,1,1,1,1,1,1,1,0,1};
+            CardArray arr = new CardSplit().split(cards);
+        System.out.println(arr.maxCardNum());
 
     }
 
