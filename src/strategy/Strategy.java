@@ -286,7 +286,7 @@ public interface Strategy {
         }
         if (arr.nEr > 1) {
             cg.nEr = arr.nEr;
-            cg.hasBigDan2 = biggestProbability(role, remainCards, remainCardNum, OutCard.duizi(12)) > Config.SMALL_CARD;
+            cg.hasBigDui2 = biggestProbability(role, remainCards, remainCardNum, OutCard.duizi(12)) > Config.SMALL_CARD;
             if (cg.nEr > 2) {
                 cg.hasBigSan2 = biggestProbability(role, remainCards, remainCardNum, OutCard.santiao(12)) > Config.SMALL_CARD;
             }

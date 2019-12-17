@@ -30,9 +30,9 @@ public class PlayTest {
         String s1 = "3,5,5,6,7,9,9,J,J,K,K,K,2,2,2,JOKER1,JOKER2";
         String s2 = "4,4,4,5,5,6,7,8,8,9,10,J,Q,Q,K,A,A";
 
-        String s = "地主:3,3,3,3,5,6,6,7,8,10,10,J,J,Q,A,A,2,2,JOKER1,JOKER2,\tPASS\n" +
-                "主下:4,4,5,6,6,7,7,8,9,9,9,10,10,J,K,K,2,\tPASS\n" +
-                "主上:4,4,5,5,7,8,8,9,J,Q,Q,Q,K,K,A,A,2,\tPASS";
+        String s = "地主:2,K,K,Q,J,J,9,9,8,7,6,5,4,3,3,3,2,Q,JOKER1,JOKER2,\tPASS\n" +
+                "主下:3,4,4,5,5,7,7,8,9,10,10,J,Q,A,A,A,2,\tPASS\n" +
+                "主上:4,5,6,6,6,7,8,8,9,10,10,J,Q,K,K,A,2,\tPASS";
         String[] ss = s.split("\n");
         if (ss.length == 3) {
             for (int i = 0; i < s.split("\n").length; i++) {
