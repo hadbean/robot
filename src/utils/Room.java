@@ -5,7 +5,6 @@ import model.CardArray;
 import model.OutCard;
 import model.Player;
 import strategy.Strategy;
-import test.CardSet;
 
 import java.util.Random;
 

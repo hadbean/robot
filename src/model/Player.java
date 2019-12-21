@@ -166,6 +166,9 @@ public class Player {
                     return out;
                 } else {
                     int l = out.getTail().length / 2;
+                    if (l == 1 && out.getTail()[0] == out.getTail()[1]){
+                        l = 2;
+                    }
                     if (role == 0) {
                         if (remainingCardNum[1] == l || remainingCardNum[0] == l) {
                             return out;
@@ -175,7 +178,7 @@ public class Player {
                             return out;
                         }
                     }
-                    return l == 1 ? OutCard.dan(out.getTail()[1]) : OutCard.duizi(out.getTail()[2]);
+                    return l == 1 ? OutCard.dan(out.getTail()[1]) : OutCard.duizi(out.getTail()[0]);
                 }
             } else {
                 return out;

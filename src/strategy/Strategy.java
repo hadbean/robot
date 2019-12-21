@@ -231,10 +231,6 @@ public interface Strategy {
             }
             arr.nLiandui = 0;
         }
-        if (n > 2) {
-            return null;
-        }
-
 
         if (n > 2) {
             return null;
@@ -257,9 +253,6 @@ public interface Strategy {
                     cg.sDan[cg.nsDan] = newCard.dan[i];
                     cg.nsDan++;
                     n++;
-                    if (out == null) {
-                        out = o;
-                    }
                 }
             }
         }
@@ -314,6 +307,12 @@ public interface Strategy {
         } else {//先出大牌
             if (out != null) {
                 return out;
+            }
+            if (cg.nbDuizi > 0){
+                return OutCard.duizi(cg.bDuizi[0]);
+            }
+            if (cg.nbDan > 0){
+                return OutCard.dan(cg.bDan[0]);
             }
 
             if (cg.hasBigSan2) {

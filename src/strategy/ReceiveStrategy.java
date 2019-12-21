@@ -282,6 +282,7 @@ public class ReceiveStrategy implements Strategy {
     public OutCard normal(int[] cards, int role, OutCard outcard, int[] remainingCards, int[] remainCardNums, List<OutCard> biggerCards) {
         OutCard best = findBestOutCard(cards, biggerCards);
 
+        //农民接牌
         if (role != 0) {
             int s = split.split(cards).score();
             if (best.getScore() > s) {
@@ -347,6 +348,7 @@ public class ReceiveStrategy implements Strategy {
                 return null;
             }
         } else {
+            //地主接牌
             int s = split.split(cards).score();
             int bs = best.getScore();
 
