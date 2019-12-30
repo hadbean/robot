@@ -295,7 +295,7 @@ public class Player {
             return out;
         }
 
-        int ememyNum = role == 0 ? Math.min(remainingCardNum[1], remainingCardNum[2]) : remainingCardNum[1];
+        int ememyNum = role == 0 ? Math.min(remainingCardNum[1], remainingCardNum[2]) : remainingCardNum[0];
         if (ememyNum == 1 && outCard.getType() == CardType.DAN) {
             out = strategy.enemyLastOne(role, cards, outCard, remainCards, remainingCardNum, outs);
             if (out != null) {

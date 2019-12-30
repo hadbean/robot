@@ -234,11 +234,13 @@ public class ReceiveStrategy implements Strategy {
                         if (rs.nDuizi > 0 && rs.duizi[rs.nDuizi - 1] == 11) {
                             return OutCard.dan(11);
                         }
-                        return OutCard.dan(rs.dan[rs.nDan - 1]);
                     }
+                    return OutCard.dan(rs.dan[rs.nDan - 1]);
                 }
             }
-        } else if (role == 0) {
+        }else if (role == 1){
+
+        }else if (role == 0) {
             for (int i = outs.size() - 1; i >= 0; i--) {
                 OutCard o = outs.get(i);
                 if (o.getType() == CardType.DAN) {
@@ -280,13 +282,23 @@ public class ReceiveStrategy implements Strategy {
 
     //兜底牌
     public OutCard normal(int[] cards, int role, OutCard outcard, int[] remainingCards, int[] remainCardNums, List<OutCard> biggerCards) {
-        OutCard best = findBestOutCard(cards, biggerCards);
+        OutCard best = findBestOutCard(cards, biggerCards,role == 2);
 
         //农民接牌
         if (role != 0) {
             int s = split.split(cards).score();
             if (best.getScore() > s) {
                 return best;
+            }
+            if (outcard.getRole() == 2) {
+                if (best.getScore() < s) {
+                    return null;
+                }
+            }
+            if (remainCardNums[0] > 2){
+                if (s - best.getScore()  > Config.MAX_ACCEPT_LOSS){
+                    return null;
+                }
             }
             if (s > Config.GOOD_CARDS_VALUE) {
                 return best;
@@ -318,6 +330,12 @@ public class ReceiveStrategy implements Strategy {
                     }
                 }
             } else {
+
+                if (best.getType() == CardType.DAN && best.getCards()[0] == 14) {
+                    if (remainingCards[13] == 1 && remainCardNums[0] > 9) {
+                        return null;
+                    }
+                }
 
                 if (best.getType() == outcard.getType() && best.getType() != CardType.ZHADAN && best.getType() != CardType.HUOJIAN && (best.getCards()[0] < 12 || (best.getCards()[0] - outcard.getCards()[0] < Config.MAX_CARDS_SPAN))) {
                     return best;
@@ -382,7 +400,7 @@ public class ReceiveStrategy implements Strategy {
     }
 
 
-    private OutCard findBestOutCard(int[] cards, List<OutCard> outs) {
+    private OutCard findBestOutCard(int[] cards, List<OutCard> outs, boolean biggerFirst) {
 
         OutCard out = null;
         int score = Integer.MIN_VALUE;
@@ -393,10 +411,31 @@ public class ReceiveStrategy implements Strategy {
             if (s > score) {
                 out = o;
                 score = s;
+                out.setScore(score);
+            } else if (biggerFirst) {
+                if (o.getType() == CardType.DAN) {
+                    if (out != null && out.getType() == CardType.DAN && out.getCards()[0] < 8 && o.getCards()[0] > 7){
+                        if (out.getScore() - s == o.getCards()[0] - out.getCards()[0]){
+                            out = o;
+                            out.setScore(s);
+                        }
+                    }
+                }else if (o.getType() == CardType.DUI){
+                    if (out != null && out.getType() == CardType.DUI && out.getCards()[0] < 4 && o.getCards()[0] > 3){
+                        int span = o.getCards()[0] - out.getCards()[0];
+                        if (o.getCards()[0]> Config.REF){
+                            span = (o.getCards()[0] - Config.REF)*3/2 - out.getCards()[0];
+                        }
+                        if (out.getScore() - s == span){
+                            out = o;
+                            out.setScore(s);
+                        }
+                    }
+                }
             }
             Strategy.removeCard(cards, EMPTY_CARDS, o, false);
         }
-        out.setScore(score);
+
         return out;
 
     }

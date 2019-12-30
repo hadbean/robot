@@ -384,6 +384,9 @@ public class OutCardStrategy implements Strategy {
                 Strategy.removeCard(cards.cards, EMPTY_CARDS, o, false);
                 outs.add(o);
             }
+            if (o != null  && fewHand){
+                return o;
+            }
         }
 
         if (cards.nDan > 0) {

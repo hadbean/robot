@@ -598,7 +598,7 @@ public interface Strategy {
                         break;
                     }
                     int n = 0;
-                    for (int i = mainCard[0] + 2 - mainCard[1]; i < 13 - mainCard[1]; i++) {
+                    for (int i = mainCard[0] + 2 - mainCard[1]; i  < 13 - mainCard[1] + n; i++) {
                         if (cards[i] > 0) {
                             n++;
                         } else {
@@ -606,7 +606,8 @@ public interface Strategy {
                         }
                         if (n == mainCard[1]) {
                             rs.add(new OutCard(new int[]{i, mainCard[1]}, CardType.SHUNZI));
-                            i = i + 2 - mainCard[1];
+                            i = i + 1 - mainCard[1];
+                            n = 0;
                         }
                     }
                     break;
@@ -616,7 +617,7 @@ public interface Strategy {
                         break;
                     }
                     int n = 0;
-                    for (int i = mainCard[0] + 2 - mainCard[1]; i < 12; i++) {
+                    for (int i = mainCard[0] + 2 - mainCard[1]; i < 12 - mainCard[1] + n; i++) {
                         if (cards[i] > 1) {
                             n++;
                         } else {
@@ -625,6 +626,7 @@ public interface Strategy {
                         if (n == mainCard[1]) {
                             rs.add(new OutCard(new int[]{i, mainCard[1]}, CardType.LIANDUI));
                             i = i + 2 - mainCard[1];
+                            n = 0;
                         }
                     }
                     break;
@@ -1077,9 +1079,9 @@ public interface Strategy {
         if (k < 0 || n < 0 || k > n) {
             return 0;
         }
-        double prop = 1.0;
+        double prop = 0.0;
         for (int i = k; i <= n; i++) {
-            prop *= binomial_matrix[n][k] * Math.pow(p, k) * Math.pow(1 - p, n - k);
+            prop += binomial_matrix[n][i] * Math.pow(p, i) * Math.pow(1 - p, n - i);
         }
         return prop;
     }

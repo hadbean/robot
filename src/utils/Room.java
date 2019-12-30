@@ -257,19 +257,19 @@ public class Room {
         int[] wins = new int[3];
         Room room = new Room();
         int[] call = new int[2];
-        int i = 100000;
+        int i = 10;
         while (i > 0) {
 //            room.init();
             if (room.initJDZ()) {
-                wins[room.play(true)] += 1;
+                wins[room.play(false)] += 1;
                 call[0] ++;
                 i --;
             }else {
                 call[1] ++;
             }
         }
-        System.out.println("JDZ: " + call[0] +"," + call[1] +" p = " + (1.0*call[0]/(call[0] + call[1])));
-        System.out.println("地主：" + wins[0] + "胜; 下家：" + wins[1] + "胜; 上家：" + wins[2] + "胜");
+        System.out.println("JDZ:" + call[0] +"," + call[1] +" p = " + (1.0*call[0]/(call[0] + call[1])));
+        System.out.println("地主:" + wins[0] + "胜; 下家:" + wins[1] + "胜; 上家:" + wins[2] + "胜");
         System.out.println(System.currentTimeMillis() - begin);
 
 
