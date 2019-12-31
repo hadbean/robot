@@ -14,6 +14,7 @@ public class ReceiveStrategy implements Strategy {
 
 
     public ReceiveStrategy(int round) {
+        this.round = round;
         split.setRound(round);
     }
 
@@ -283,10 +284,11 @@ public class ReceiveStrategy implements Strategy {
     //兜底牌
     public OutCard normal(int[] cards, int role, OutCard outcard, int[] remainingCards, int[] remainCardNums, List<OutCard> biggerCards) {
         OutCard best = findBestOutCard(cards, biggerCards,role == 2);
-
+        CardArray arr = split.split(cards);
         //农民接牌
         if (role != 0) {
-            int s = split.split(cards).score();
+
+            int s = arr.score();
             if (best.getScore() > s) {
                 return best;
             }
@@ -295,11 +297,12 @@ public class ReceiveStrategy implements Strategy {
                     return null;
                 }
             }
-            if (remainCardNums[0] > 2){
+            if (remainCardNums[0] > 7){
                 if (s - best.getScore()  > Config.MAX_ACCEPT_LOSS){
                     return null;
                 }
             }
+
             if (s > Config.GOOD_CARDS_VALUE) {
                 return best;
             }
@@ -367,7 +370,7 @@ public class ReceiveStrategy implements Strategy {
             }
         } else {
             //地主接牌
-            int s = split.split(cards).score();
+            int s = arr.score();
             int bs = best.getScore();
 
             if (bs >= s) {
@@ -376,8 +379,31 @@ public class ReceiveStrategy implements Strategy {
             if (s > Config.GOOD_CARDS_VALUE) {
                 return best;
             }
-            if (s - bs < CardArray.P[round]) {
-                return best;
+//            if (s - bs < CardArray.P[round]) {
+//                return best;
+//            }
+            //判断是否是拆了炸弹或者三条，如果是，判断是，并且并没有减少手数，则不接
+            {
+                switch (best.getType()){
+                    case DAN:{
+                        if (best.getCards()[0] < 12){
+                        }
+                        break;
+                    }
+                    case DUI:{
+                        break;
+                    }
+                    case SANTIAO:
+                    case SANTIAOWITHTAIL:{
+                        if (cards[best.getCards()[0]] == 4){
+                            if (best.getHands() >= arr.hands ){
+                                return null;
+                            }
+                        }
+                    }
+
+                    default:break;
+                }
             }
 
             //地主接牌规则,接地主下级时，尽可能接牌，因为该位置不会故意压牌，大部分情况下，不会由他来压牌，更多是为了跑牌
@@ -408,16 +434,19 @@ public class ReceiveStrategy implements Strategy {
             Strategy.removeCard(cards, EMPTY_CARDS, o, true);
             CardArray rs = split.split(cards);
             int s = rs.score();
+            int hands = rs.hands;
             if (s > score) {
                 out = o;
                 score = s;
                 out.setScore(score);
+                out.setHands(hands);
             } else if (biggerFirst) {
                 if (o.getType() == CardType.DAN) {
                     if (out != null && out.getType() == CardType.DAN && out.getCards()[0] < 8 && o.getCards()[0] > 7){
                         if (out.getScore() - s == o.getCards()[0] - out.getCards()[0]){
                             out = o;
                             out.setScore(s);
+                            out.setHands(hands);
                         }
                     }
                 }else if (o.getType() == CardType.DUI){
@@ -429,6 +458,7 @@ public class ReceiveStrategy implements Strategy {
                         if (out.getScore() - s == span){
                             out = o;
                             out.setScore(s);
+                            out.setHands(hands);
                         }
                     }
                 }

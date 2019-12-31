@@ -17,7 +17,8 @@ public class OutCard {
     private double bp;
 
 
-    private int score = 0;
+    private int score;
+    private int hands;
 
 
     public OutCard(int[] cards, CardType type) {
@@ -79,6 +80,14 @@ public class OutCard {
 
     public void setMode(String mode) {
         this.mode = mode;
+    }
+
+    public int getHands() {
+        return hands;
+    }
+
+    public void setHands(int hands) {
+        this.hands = hands;
     }
 
     @Override
