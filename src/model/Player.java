@@ -146,11 +146,12 @@ public class Player {
      */
     public OutCard out(int round, int[] remainingCardNum, int[] alreadyOutCards, OutCard outCard) {
 
-        CardArray rs = new CardSplit().split(cards);
+
         if (outCard != null && outCard.getRole() != role) {
             return receive(round, remainingCardNum, alreadyOutCards, outCard);
         }
 
+        CardArray rs = new CardSplit().split(cards);
         OutCardStrategy strategy = new OutCardStrategy(round);
 
         //判断是否一手牌出完
