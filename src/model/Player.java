@@ -223,7 +223,7 @@ public class Player {
             }
         }
         OutCard outSL = strategy.smallAndLongFirst(rs, role, remainingCards, remainingCardNum);
-        if (outSL != null && outSL.getBp() < Config.SMALL_CARD_MAP.get(outSL.getType())) {
+        if (outSL != null && (outSL.getBp() < Config.SMALL_CARD_MAP.get(outSL.getType()) || outSL.getType() == CardType.FEIJI || outSL.getType() == CardType.FEIJIWITHTAIL)) {
             outSL.setMode("smallAndLongFirst");
             return outSL;
         }

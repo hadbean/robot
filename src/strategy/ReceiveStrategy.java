@@ -166,7 +166,7 @@ public class ReceiveStrategy implements Strategy {
     //接完该牌后，能赢
     public OutCard jieAndWin(int role, int[] cards, int[] remainCards, List<OutCard> outCards, int[] remainingCardNum) {
 
-        int ememyNum = role == 0 ? Math.min(remainingCardNum[1], remainingCardNum[2]) : remainingCardNum[1];
+        int ememyNum = role == 0 ? Math.min(remainingCardNum[1], remainingCardNum[2]) : remainingCardNum[0];
         for (OutCard x : outCards) {
             Strategy.removeCard(cards, EMPTY_CARDS, x, true);
             double bp = biggestProbability(role, remainCards, remainingCardNum, x);
@@ -175,6 +175,12 @@ public class ReceiveStrategy implements Strategy {
                 if (out != null) {
                     Strategy.removeCard(cards, EMPTY_CARDS, x, false);
                     return x;
+                }else {
+                    out = OutCardStrategy.oneHand(split.split(cards),remainingCardNum[role] - x.getLength());
+                    if (out != null){
+                        Strategy.removeCard(cards, EMPTY_CARDS, x, false);
+                        return x;
+                    }
                 }
             } else if (ememyNum > 1 || x.getType() != CardType.DAN) {
                 CardArray arr = split.split(cards);
@@ -239,9 +245,9 @@ public class ReceiveStrategy implements Strategy {
                     return OutCard.dan(rs.dan[rs.nDan - 1]);
                 }
             }
-        }else if (role == 1){
+        } else if (role == 1) {
 
-        }else if (role == 0) {
+        } else if (role == 0) {
             for (int i = outs.size() - 1; i >= 0; i--) {
                 OutCard o = outs.get(i);
                 if (o.getType() == CardType.DAN) {
@@ -283,8 +289,9 @@ public class ReceiveStrategy implements Strategy {
 
     //兜底牌
     public OutCard normal(int[] cards, int role, OutCard outcard, int[] remainingCards, int[] remainCardNums, List<OutCard> biggerCards) {
-        OutCard best = findBestOutCard(cards, biggerCards,role == 2);
+
         CardArray arr = split.split(cards);
+        OutCard best = findBestOutCard(role,cards,arr,outcard,remainCardNums, biggerCards, role == 2);
         //农民接牌
         if (role != 0) {
 
@@ -297,8 +304,8 @@ public class ReceiveStrategy implements Strategy {
                     return null;
                 }
             }
-            if (remainCardNums[0] > 7){
-                if (s - best.getScore()  > Config.MAX_ACCEPT_LOSS){
+            if (remainCardNums[0] > 7) {
+                if (s - best.getScore() > Config.MAX_ACCEPT_LOSS) {
                     return null;
                 }
             }
@@ -376,35 +383,13 @@ public class ReceiveStrategy implements Strategy {
             if (bs >= s) {
                 return best;
             }
-            if (s > Config.GOOD_CARDS_VALUE) {
+            if (bs > Config.GOOD_CARDS_VALUE) {
                 return best;
             }
 //            if (s - bs < CardArray.P[round]) {
 //                return best;
 //            }
             //判断是否是拆了炸弹或者三条，如果是，判断是，并且并没有减少手数，则不接
-            {
-                switch (best.getType()){
-                    case DAN:{
-                        if (best.getCards()[0] < 12){
-                        }
-                        break;
-                    }
-                    case DUI:{
-                        break;
-                    }
-                    case SANTIAO:
-                    case SANTIAOWITHTAIL:{
-                        if (cards[best.getCards()[0]] == 4){
-                            if (best.getHands() >= arr.hands ){
-                                return null;
-                            }
-                        }
-                    }
-
-                    default:break;
-                }
-            }
 
             //地主接牌规则,接地主下级时，尽可能接牌，因为该位置不会故意压牌，大部分情况下，不会由他来压牌，更多是为了跑牌
             if (outcard.getRole() == 1) {
@@ -414,48 +399,140 @@ public class ReceiveStrategy implements Strategy {
             } else {
                 if (best.getType() == outcard.getType() && best.getType() != CardType.ZHADAN && best.getType() != CardType.HUOJIAN && (best.getCards()[0] < 12)) {
                     return best;
+                } else if (remainingCards[13] == 0 && remainingCards[14] == 0) {
+                    if (best.getType() == CardType.DAN) {
+                        return best;
+                    } else if (best.getType() == CardType.DUI && arr.nDan > cards[best.getCards()[0]]) {
+                        return null;
+                    }
                 }
             }
 
         }
-        if (Strategy.randomFloat() < Config.FOOL_ACTION) {
-            return best;
-        }
+//        if (Strategy.randomFloat() < Config.FOOL_ACTION) {
+//            return best;
+//        }
 
         return null;
     }
 
+    private OutCard shouldSplit(int role, int[] cards, CardArray origin, OutCard out, OutCard o, int[] remainCardNum) {
 
-    private OutCard findBestOutCard(int[] cards, List<OutCard> outs, boolean biggerFirst) {
+        int c = o.getCards()[0];
+        switch (o.getType()) {
+            case DAN: {
+                if (o.getCards()[0] < 12) {
+                    if (cards[c] == 3) {
+                        return null;
+                    } else if (cards[c] == 2) {
+                        if (o.getHands() >= origin.hands) {
+                            return null;
+                        }
+                    } else if (cards[c] == 1) {
+                        if (role != 0 && out.getRole() != 0) {
+                            if (o.getHands() >= origin.hands) {
+                                return null;
+                            }
+                        } else if (role == 0) {
+                            if (remainCardNum[1] > 7 || remainCardNum[2] > 7) {
+                                return null;
+                            }
+                        }
+                    }
+                } else if (o.getCards()[0] > 12) {
+                    if (role == 0) {
+                        if (origin.nHuojian > 0) {
+                            if (origin.nDan > 4 && (remainCardNum[1] < 7 || remainCardNum[2] < 7)) {
+                                return o;
+                            }else {
+                                return null;
+                            }
+                        }
+                    } else {
+                        if (origin.nHuojian > 0){
+                            if (remainCardNum[0] > 7 || origin.hands < 4 || remainCardNum[3 - role] < 7){
+                                return null;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+            case DUI: {
+                //拆3条
+                if (cards[o.getCards()[0]] == 1) {
+                    if (o.getCards()[0] < 12) {
+                        if (role != 0 && out.getRole() != 0) {
+                            return null;
+                        }else if (role == 0){
+                            if (remainCardNum[out.getRole()] > 7 && remainCardNum[3 - out.getRole()] > 1){
+                                return null;
+                            }
+                        }else if (role == 2){
+
+                        }
+                        if (o.getHands() > out.getHands()) {
+                            return null;
+                        }
+                        //是否接对2
+                    }
+                } else if (cards[o.getCards()[0]] == 2) {
+                    if (o.getHands() >= out.getHands()) {
+                        return null;
+                    }
+                }
+                break;
+            }
+            case SANTIAO:
+            case SANTIAOWITHTAIL: {
+                if (cards[o.getCards()[0]] == 1) {
+                    if (o.getHands() >= origin.hands) {
+                        return null;
+                    }
+                }
+            }
+
+            default:
+                break;
+        }
+        return o;
+    }
+
+
+    private OutCard findBestOutCard(int role,int[] cards,CardArray origin,OutCard outCard,int[] remainCardNum, List<OutCard> outs, boolean biggerFirst) {
 
         OutCard out = null;
         int score = Integer.MIN_VALUE;
+        int hands = Integer.MAX_VALUE;
         for (OutCard o : outs) {
             Strategy.removeCard(cards, EMPTY_CARDS, o, true);
             CardArray rs = split.split(cards);
             int s = rs.score();
-            int hands = rs.hands;
-            if (s > score) {
+            int h = rs.hands;
+            o.setHands(h);
+            o.setScore(s);
+            if (s > score && shouldSplit(role,cards,origin,outCard,o,remainCardNum) != null) {
                 out = o;
                 score = s;
+                hands = h;
                 out.setScore(score);
                 out.setHands(hands);
             } else if (biggerFirst) {
                 if (o.getType() == CardType.DAN) {
-                    if (out != null && out.getType() == CardType.DAN && out.getCards()[0] < 8 && o.getCards()[0] > 7){
-                        if (out.getScore() - s == o.getCards()[0] - out.getCards()[0]){
+                    if (out != null && out.getType() == CardType.DAN && out.getCards()[0] < 8 && o.getCards()[0] > 7) {
+                        if (out.getScore() - s == o.getCards()[0] - out.getCards()[0]) {
                             out = o;
                             out.setScore(s);
                             out.setHands(hands);
                         }
                     }
-                }else if (o.getType() == CardType.DUI){
-                    if (out != null && out.getType() == CardType.DUI && out.getCards()[0] < 4 && o.getCards()[0] > 3){
+                } else if (o.getType() == CardType.DUI) {
+                    if (out != null && out.getType() == CardType.DUI && out.getCards()[0] < 4 && o.getCards()[0] > 3) {
                         int span = o.getCards()[0] - out.getCards()[0];
-                        if (o.getCards()[0]> Config.REF){
-                            span = (o.getCards()[0] - Config.REF)*3/2 - out.getCards()[0];
+                        if (o.getCards()[0] > Config.REF) {
+                            span = (o.getCards()[0] - Config.REF) * 3 / 2 - out.getCards()[0];
                         }
-                        if (out.getScore() - s == span){
+                        if (out.getScore() - s == span) {
                             out = o;
                             out.setScore(s);
                             out.setHands(hands);

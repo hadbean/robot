@@ -1,5 +1,6 @@
 package strategy;
 
+import config.Config;
 import constant.CardType;
 import model.CardArray;
 import model.OutCard;
@@ -11,6 +12,7 @@ import java.util.List;
  * 主动出牌车略
  */
 public class OutCardStrategy implements Strategy {
+
 
 
     private int[] alearyOutCards;
@@ -389,6 +391,7 @@ public class OutCardStrategy implements Strategy {
             }
         }
 
+
         if (cards.nDan > 0) {
             OutCard o = OutCard.dan(cards.dan[0]);
             o.setBp(biggestProbability(role, remainingCards, remainCardNum, o, false));
@@ -416,6 +419,13 @@ public class OutCardStrategy implements Strategy {
             double maxC = Integer.MIN_VALUE;
             for (OutCard o : outs) {
                 o.setBp(biggestProbability(role, remainingCards, remainCardNum, o, false));
+                if (o.getBp() < Config.SMALL_CARD_MAP.get(o.getType())){
+                    //是否有手牌可以接回来
+                    OutCard bg = findBiggestCardFromMe(role, cards, remainingCards, remainCardNum, o);
+                    if (bg != null && biggestProbability(role, remainingCards, remainCardNum, bg, true) > Config.SMALL_CARD_MAP.get(bg.getType())) {
+                        o.setRecall(true);
+                    }
+                }
                 Strategy.removeCard(cards.cards, EMPTY_CARDS, o, true);
                 o.setScore(split.split(cards.cards).score());
                 Strategy.removeCard(cards.cards, EMPTY_CARDS, o, false);
@@ -457,15 +467,19 @@ public class OutCardStrategy implements Strategy {
                 } else if (o.getCards()[0] < minC) {
                     k++;
                 }
-                if (k > max) {
-                    max = k;
-                    if (fewHand && out != null && out.getType() == CardType.DAN && o.getType() == CardType.DAN) {
-                        continue;
-                    }
+                if (out != null && !out.isRecall() && o.isRecall()){
                     out = o;
-                } else if (k == max) {
-                    if (Strategy.randomFloat() > 0.5) {
+                }else {
+                    if (k > max) {
+                        max = k;
+                        if (fewHand && out != null && out.getType() == CardType.DAN && o.getType() == CardType.DAN) {
+                            continue;
+                        }
                         out = o;
+                    } else if (k == max) {
+                        if (Strategy.randomFloat() > 0.5) {
+                            out = o;
+                        }
                     }
                 }
             }
@@ -473,4 +487,5 @@ public class OutCardStrategy implements Strategy {
         }
         return out;
     }
+
 }

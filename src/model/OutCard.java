@@ -15,6 +15,7 @@ public class OutCard {
     private CardType type;
     private String mode;
     private double bp;
+    private boolean recall;
 
 
     private int score;
@@ -88,6 +89,14 @@ public class OutCard {
 
     public void setHands(int hands) {
         this.hands = hands;
+    }
+
+    public boolean isRecall() {
+        return recall;
+    }
+
+    public void setRecall(boolean recall) {
+        this.recall = recall;
     }
 
     @Override

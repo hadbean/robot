@@ -40,7 +40,7 @@ public class Config {
     public static final int MIN_CARD_IGNORE = 12;
     public static final String MIN_CARD_IGNORE_EXP = "最小可以忽略的牌";
 
-    public static final int GOOD_CARDS_VALUE = 10;
+    public static final int GOOD_CARDS_VALUE = 5;
     public static final String GOOD_CARDS_VALUE_EXP = "几分算好牌";
 
     public static final int MAX_CARDS_SPAN = 10;
