@@ -290,7 +290,7 @@ public interface Strategy {
         if (n == 2) {
             if (small.size() > 0) {
                 for (OutCard o : small) {
-                    OutCard bg = findBiggestCardFromMe(role, split.split(cards), remainCards, remainCardNum, o);
+                    OutCard bg = findBiggestCardFromMe(role, split.split(cards), remainCards, remainCardNum, o,true);
                     if (bg != null && biggestProbability(role, remainCards, remainCardNum, bg, true) > Config.SMALL_CARD_MAP.get(bg.getType())) {
                         return o;
                     }
@@ -333,7 +333,7 @@ public interface Strategy {
         return null;
     }
 
-    default OutCard findBiggestCardFromMe(int role, CardArray rs, int[] remainCards, int[] remaingCardNum, OutCard out) {
+    default OutCard findBiggestCardFromMe(int role, CardArray rs, int[] remainCards, int[] remaingCardNum, OutCard out, boolean force) {
 
         CardType type = out.getType();
         switch (type) {
@@ -409,6 +409,13 @@ public interface Strategy {
                             return o;
                         }
                     }
+                    if (out.getCards()[0] < 12 && rs.nEr > 1){
+                        OutCard o = OutCard.dan(12);
+                        double bp = biggestProbability(role, remainCards, remaingCardNum, o);
+                        if (bp > Config.SMALL_CARD_MAP.get(o.getType())) {
+                            return o;
+                        }
+                    }
                 }
                 break;
             }
@@ -431,6 +438,9 @@ public interface Strategy {
             }
             default:
                 break;
+        }
+        if (force){
+            return findZhanDanOrHuoJian(rs.cards, out);
         }
         return null;
     }

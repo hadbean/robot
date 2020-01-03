@@ -14,7 +14,6 @@ import java.util.List;
 public class OutCardStrategy implements Strategy {
 
 
-
     private int[] alearyOutCards;
     private int round;
 
@@ -356,7 +355,9 @@ public class OutCardStrategy implements Strategy {
         } else if (role == 2) {
             if (cards.nDuizi > 0) {
                 return OutCard.duizi(cards.duizi[0]);
-            } else {
+            } else if (cards.nSantiao > 0){
+                return null;
+            }else {
                 return OutCard.dan(cards.dan[cards.nDan - 1]);
             }
         }
@@ -421,7 +422,7 @@ public class OutCardStrategy implements Strategy {
                 o.setBp(biggestProbability(role, remainingCards, remainCardNum, o, false));
                 if (o.getBp() < Config.SMALL_CARD_MAP.get(o.getType())){
                     //是否有手牌可以接回来
-                    OutCard bg = findBiggestCardFromMe(role, cards, remainingCards, remainCardNum, o);
+                    OutCard bg = findBiggestCardFromMe(role, cards, remainingCards, remainCardNum, o,cards.hands < 4);
                     if (bg != null && biggestProbability(role, remainingCards, remainCardNum, bg, true) > Config.SMALL_CARD_MAP.get(bg.getType())) {
                         o.setRecall(true);
                     }

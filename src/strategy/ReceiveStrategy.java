@@ -194,7 +194,7 @@ public class ReceiveStrategy implements Strategy {
                 }
             } else if (ememyNum > 1 || x.getType() != CardType.DAN) {
                 CardArray arr = split.split(cards);
-                OutCard o = findBiggestCardFromMe(role, arr, remainCards, remainingCardNum, x);
+                OutCard o = findBiggestCardFromMe(role, arr, remainCards, remainingCardNum, x,true);
                 if (o != null) {
                     Strategy.removeCard(cards, EMPTY_CARDS, o, true);
                     OutCard out = allBig2(role, cards, remainCards, remainingCardNum);
@@ -207,6 +207,13 @@ public class ReceiveStrategy implements Strategy {
                             if (x.getScore() >= best.getScore() && x.getHands() < best.getHands()){
                                 best = x;
                             }
+                        }
+                    }else {
+                        out = OutCardStrategy.oneHand(split.split(cards),remainingCardNum[role] - x.getLength()  - o.getLength());
+                        if (out != null){
+                            Strategy.removeCard(cards, EMPTY_CARDS, x, false);
+                            Strategy.removeCard(cards, EMPTY_CARDS, o, false);
+                            return x;
                         }
                     }
                     Strategy.removeCard(cards, EMPTY_CARDS, o, false);
@@ -418,7 +425,7 @@ public class ReceiveStrategy implements Strategy {
             } else {
                 if (best.getType() == outcard.getType() && best.getType() != CardType.ZHADAN && best.getType() != CardType.HUOJIAN && (best.getCards()[0] < 12)) {
                     return best;
-                } else if (remainingCards[13] == 0 && remainingCards[14] == 0) {
+                } else if ((remainingCards[13] == 0 && remainingCards[14] == 0) || cards[13] == 1  || cards[14] == 1) {
                     if (best.getType() == CardType.DAN) {
                         return best;
                     } else if (best.getType() == CardType.DUI && arr.nDan > cards[best.getCards()[0]]) {

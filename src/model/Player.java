@@ -152,6 +152,7 @@ public class Player {
         }
 
         CardArray rs = new CardSplit().split(cards);
+        rs.score();
         OutCardStrategy strategy = new OutCardStrategy(round);
 
         //判断是否一手牌出完
@@ -228,7 +229,7 @@ public class Player {
             outSL.setMode("smallAndLongFirst");
             return outSL;
         }
-
+        boolean fewHand = false;
         if (emeryCarNum == 1) {
             out = strategy.enemyLastOne(rs, role, remainingCardNum);
             if (out != null) {
@@ -236,7 +237,7 @@ public class Player {
                 return out;
             }
         }
-        boolean fewHand = strategy.fewPoke(rs, remainingCardNum[role]);
+        fewHand = strategy.fewPoke(rs, remainingCardNum[role]);
         if (fewHand && outSL != null) {
             return outSL;
         }
@@ -245,6 +246,9 @@ public class Player {
             if (outCard.getRole() == role && outCard.getType() == CardType.DAN){
                 fewHand = true;
             }
+        }
+        if (emeryCarNum == 1){
+            fewHand = true;
         }
         out = strategy.smallFirst(rs, role, remainingCards, remainingCardNum, fewHand);
         if (out == null && outSL == null) {
@@ -285,6 +289,7 @@ public class Player {
 
         out = strategy.zhaAndWin(role, cards, remainCards, remainingCardNum, outCard);
         if (out != null) {
+            out.setMode("zhaAndWin");
             return out;
         }
 
