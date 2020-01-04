@@ -88,6 +88,11 @@ public class Room {
                 players[who] = players[0];
                 players[0] = p;
             }
+            for (int i = 0; i < players.length; i++) {
+                if (players[i].jiabei(dp)){
+                    stat.jb[i] += 1;
+                }
+            }
             return true;
         }else {
             Strategy.removeFrom(dp,players[0].getCards(),false);
@@ -257,11 +262,11 @@ public class Room {
         int[] wins = new int[3];
         Room room = new Room();
         int[] call = new int[2];
-        int i = 10;
+        int i = 100000;
         while (i > 0) {
 //            room.init();
             if (room.initJDZ()) {
-                wins[room.play(false)] += 1;
+                wins[room.play(true)] += 1;
                 call[0] ++;
                 i --;
             }else {
@@ -276,7 +281,7 @@ public class Room {
 
 //        System.out.println(stat.toString());
         System.out.println(stat.n + "\t" + stat.jdz[0]+ "\t" + stat.jdz[1]+ "\t" + stat.jdz[2]);
-        System.out.println(stat.n + "\t" + stat.jdz[0]+ "\t" + stat.jdz[1]+ "\t" + stat.jdz[2]);
+        System.out.println("加倍\t" + stat.jb[0]+ "\t" + stat.jb[1]+ "\t" + stat.jb[2]);
         System.out.println(stat.n + "\t" + (stat.score/100000)+ "\t" + (stat.hands/100000)+ "\t" + (stat.maxCard/100000)+ "\t" + (stat.dzs/100000));
     }
 }

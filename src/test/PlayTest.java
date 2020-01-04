@@ -26,17 +26,17 @@ public class PlayTest {
 主下:3,4,4,5,8,8,9,10,10,J,J,Q,A,A,A,2,JOKER1,	PASS
 主上:5,6,6,7,8,8,9,9,10,J,Q,K,K,K,A,2,JOKER2,	PASS
          */
-        String s0 = "3,3,3,4,6,6,7,7,8,8,9,10,10,10,J,Q,Q,A,A,2";
-        String s1 = "3,5,5,6,7,9,9,J,J,K,K,K,2,2,2,JOKER1,JOKER2";
-        String s2 = "4,4,4,5,5,6,7,8,8,9,10,J,Q,Q,K,A,A";
+        String s0 = "3,3,4,4,7,8,9,K,2,K,Q,Q,A,A,2,JOKER1,JOKER2,2,5,3";
+        String s1 = "3,4,4,5,6,7,8,8,8,9,10,10,J,Q,K,A,2";
+        String s2 = "5,5,6,6,6,7,7,9,9,10,10,,J,J,J,Q,K,A";
 
 //        String s = "地主:6,7,JOKER1,\tDUI:4,4 \n" +
 //                "主下:Q,2,2,\tDUI:9,9 \t实际出牌：9,9\n" +
 //                "主上:9,9,2,\tDUI:A,A \t实际出牌：A,A";
 
-        String s = "地主:3,4,4,5,6,6,7,7,8,9,9,10,Q,Q,K,K,2,2,2,JOKER2,\t<smallAndLongFirst>SHUNZI:3,4,5,6,7, \n" +
-                "主下:3,3,3,4,6,7,7,8,8,9,10,10,Q,Q,A,2,JOKER1,\tSHUNZI:6,7,8,9,10, \t实际出牌：6,7,8,9,10,\n" +
-                "主上:4,5,5,5,6,8,9,10,J,J,J,J,K,K,A,A,A,\tPASS\t实际出牌：PASS";
+        String s = "地主:3,3,3,4,4,5,7,8,9,K,K,Q,Q,A,A,2,2,2,JOKER1,JOKER2,\t<smallAndLongFirst>SHUNZI:3,4,5,6,7, \n" +
+                "主下:3,4,4,5,6,7,8,8,8,10,J,Q,K,A,2,\tSHUNZI:6,7,8,9,10, \t实际出牌：6,7,8,9,10,\n" +
+                "主上:5,5,6,6,6,7,7,9,9,10,10,J,J,J,Q,K,A,\tPASS\t实际出牌：PASS";
         String[] ss = s.split("\n");
         if (ss.length == 3) {
             for (int i = 0; i < s.split("\n").length; i++) {

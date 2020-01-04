@@ -4,6 +4,7 @@ public class Statistics {
 
 
     public int[] jdz = {0,0,0};
+    public int[] jb = {0,0,0};
 
     public int n;
     public int score;

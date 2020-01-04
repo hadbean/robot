@@ -237,7 +237,7 @@ public interface Strategy {
         }
         CardArray newCard = split.split(arr.cards);
 
-        int ememyCardNum = role == 0? Math.min(remainCardNum[1],remainCardNum[2]):remainCardNum[0];
+        int ememyCardNum = role == 0 ? Math.min(remainCardNum[1], remainCardNum[2]) : remainCardNum[0];
         if (newCard.nDan > 0) {
             for (int i = 0; i < newCard.nDan; i++) {
                 OutCard o = OutCard.dan(newCard.dan[i]);
@@ -253,6 +253,7 @@ public interface Strategy {
                     cg.sDan[cg.nsDan] = newCard.dan[i];
                     cg.nsDan++;
                     n++;
+                    small.add(OutCard.dan(newCard.dan[i]));
                 }
             }
         }
@@ -273,6 +274,7 @@ public interface Strategy {
                 } else {
                     cg.sDuizi[cg.nsDuizi] = newCard.duizi[i];
                     cg.nsDuizi++;
+                    small.add(OutCard.duizi(newCard.duizi[i]));
                     n++;
                 }
             }
@@ -288,30 +290,30 @@ public interface Strategy {
             return null;
         }
         if (n == 2) {
-            if (small.size() > 0) {
-                for (OutCard o : small) {
-                    OutCard bg = findBiggestCardFromMe(role, split.split(cards), remainCards, remainCardNum, o,true);
-                    if (bg != null && biggestProbability(role, remainCards, remainCardNum, bg, true) > Config.SMALL_CARD_MAP.get(bg.getType())) {
-                        return o;
-                    }
-                }
 
-                if (cg.nsDan > 0 && cg.nbDan > 0) {
-                    return OutCard.dan(cg.sDan[0]);
-                } else if (cg.nsDuizi > 0 && (cg.nbDuizi > 0 || cg.hasBigDui2)) {
-                    return OutCard.duizi(cg.sDuizi[0]);
+            for (OutCard o : small) {
+                OutCard bg = findBiggestCardFromMe(role, split.split(cards), remainCards, remainCardNum, o, true);
+                if (bg != null && biggestProbability(role, remainCards, remainCardNum, bg, true) > Config.SMALL_CARD_MAP.get(bg.getType())) {
+                    return o;
                 }
-
-                return null;
             }
+
+//            if (cg.nsDan > 0 && cg.nbDan > 0) {
+//                return OutCard.dan(cg.sDan[0]);
+//            } else if (cg.nsDuizi > 0 && (cg.nbDuizi > 0 || cg.hasBigDui2)) {
+//                return OutCard.duizi(cg.sDuizi[0]);
+//            }
+
+            return null;
+
         } else {//先出大牌
             if (out != null) {
                 return out;
             }
-            if (cg.nbDuizi > 0){
+            if (cg.nbDuizi > 0) {
                 return OutCard.duizi(cg.bDuizi[0]);
             }
-            if (cg.nbDan > 0){
+            if (cg.nbDan > 0) {
                 return OutCard.dan(cg.bDan[0]);
             }
 
@@ -409,7 +411,7 @@ public interface Strategy {
                             return o;
                         }
                     }
-                    if (out.getCards()[0] < 12 && rs.nEr > 1){
+                    if (out.getCards()[0] < 12 && rs.nEr > 1) {
                         OutCard o = OutCard.dan(12);
                         double bp = biggestProbability(role, remainCards, remaingCardNum, o);
                         if (bp > Config.SMALL_CARD_MAP.get(o.getType())) {
@@ -439,7 +441,7 @@ public interface Strategy {
             default:
                 break;
         }
-        if (force){
+        if (force) {
             return findZhanDanOrHuoJian(rs.cards, out);
         }
         return null;
@@ -608,7 +610,7 @@ public interface Strategy {
                         break;
                     }
                     int n = 0;
-                    for (int i = mainCard[0] + 2 - mainCard[1]; i  < 13 - mainCard[1] + n; i++) {
+                    for (int i = mainCard[0] + 2 - mainCard[1]; i < 13 - mainCard[1] + n; i++) {
                         if (cards[i] > 0) {
                             n++;
                         } else {

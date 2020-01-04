@@ -5,7 +5,7 @@ import utils.CardSplit;
 
 public class CardArray {
 
-    public static int[] P = {6, 6, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
+    public static int[] P = {6, 6, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
     public int[] cards;
     public int round;
     private int usage;
@@ -141,8 +141,8 @@ public class CardArray {
 
     public static void main(String[] args) {
 
-            int[] cards = {0,0,1,2,3,2,1,1,1,1,1,1,1,0,1};
-            CardArray arr = new CardSplit().split(cards);
+        int[] cards = {0, 0, 1, 2, 3, 2, 1, 1, 1, 1, 1, 1, 1, 0, 1};
+        CardArray arr = new CardSplit().split(cards);
         System.out.println(arr.maxCardNum());
 
     }

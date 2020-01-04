@@ -183,6 +183,8 @@ public class ReceiveStrategy implements Strategy {
                     }else {
                         if (x.getScore() >= best.getScore() && x.getHands() < best.getHands()){
                             best = x;
+                        } else if (x.getType() == CardType.HUOJIAN && best.getCards()[0] > 12){
+                            best = x;
                         }
                     }
                 }else {
@@ -540,7 +542,7 @@ public class ReceiveStrategy implements Strategy {
             int h = rs.hands;
             o.setHands(h);
             o.setScore(s);
-            if (s > score && shouldSplit(role,cards,origin,outCard,o,remainCardNum) != null) {
+            if ((s > score || hands - h > 1) && shouldSplit(role,cards,origin,outCard,o,remainCardNum) != null) {
                 out = o;
                 score = s;
                 hands = h;
