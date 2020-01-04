@@ -292,7 +292,7 @@ public interface Strategy {
         if (n == 2) {
 
             for (OutCard o : small) {
-                OutCard bg = findBiggestCardFromMe(role, split.split(cards), remainCards, remainCardNum, o, true);
+                OutCard bg = findBiggestCardFromMe(role, (o.getType() == CardType.DAN || o.getType() == CardType.DUI)?split.split(arr.cards):split.split(cards), remainCards, remainCardNum, o, true);
                 if (bg != null && biggestProbability(role, remainCards, remainCardNum, bg, true) > Config.SMALL_CARD_MAP.get(bg.getType())) {
                     return o;
                 }
