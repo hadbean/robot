@@ -352,7 +352,7 @@ public class OutCardStrategy implements Strategy {
                 return OutCard.dan(cards.dan[cards.nDan - 2]);
             }
             return null;
-        } else if (role == 2) {
+        } else {
             if (cards.nDuizi > 0) {
                 return OutCard.duizi(cards.duizi[0]);
             } else if (cards.nSantiao > 0){
@@ -360,9 +360,8 @@ public class OutCardStrategy implements Strategy {
             }else {
                 return OutCard.dan(cards.dan[cards.nDan - 1]);
             }
+            //地主处理地方只有一张牌时
         }
-
-        return null;
     }
 
     //以小牌优先
