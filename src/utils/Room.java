@@ -262,11 +262,11 @@ public class Room {
         int[] wins = new int[3];
         Room room = new Room();
         int[] call = new int[2];
-        int i = 100000;
+        int i = 1;
         while (i > 0) {
 //            room.init();
             if (room.initJDZ()) {
-                wins[room.play(true)] += 1;
+                wins[room.play(false)] += 1;
                 call[0] ++;
                 i --;
             }else {

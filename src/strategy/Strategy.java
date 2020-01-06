@@ -132,7 +132,9 @@ public interface Strategy {
 
         int myRemainNum = remainCardNum[0];
         CardArray arr = split.split(tmpCards);
+        boolean change = false;
         if (arr.nFeiji > 0) {
+            change = true;
             for (int i = 0; i < arr.nFeiji; i++) {
                 OutCard o = OutCard.feiji(arr.feiji[i]);
                 removeCard(arr.cards, EMPTY_CARDS, o, true);
@@ -155,8 +157,12 @@ public interface Strategy {
             }
             arr.nFeiji = 0;
         }
-        arr = split.split(arr.cards);
+        if (change) {
+            arr = split.split(arr.cards);
+            change = false;
+        }
         if (arr.nShunzi > 0) {
+            change = true;
             for (int i = 0; i < arr.nShunzi; i++) {
                 OutCard o = OutCard.shunzi(arr.shunzi[i]);
 
@@ -176,6 +182,7 @@ public interface Strategy {
             return null;
         }
         if (arr.nSantiao > 0) {
+            change = true;
             for (int i = 0; i < arr.nSantiao; i++) {
                 OutCard o = OutCard.santiao(arr.santiao[i]);
                 removeCard(arr.cards, EMPTY_CARDS, o, true);
@@ -213,9 +220,12 @@ public interface Strategy {
             }
             arr.nSantiao = 0;
         }
-        arr = split.split(arr.cards);
-
+        if (change) {
+            arr = split.split(arr.cards);
+            change = false;
+        }
         if (arr.nLiandui > 0) {
+            change = true;
             for (int i = 0; i < arr.nLiandui; i++) {
                 OutCard o = OutCard.liandui(arr.liandui[i]);
                 double bp = biggestProbability(role, remainCards, remainCardNum, o);
@@ -235,9 +245,9 @@ public interface Strategy {
         if (n > 2) {
             return null;
         }
-        CardArray newCard = split.split(arr.cards);
+        CardArray newCard = change ? split.split(arr.cards) : arr;
 
-        int ememyCardNum = role == 0 ? Math.min(remainCardNum[1], remainCardNum[2]) : remainCardNum[0];
+        int emermyCardNum = role == 0 ? Math.min(remainCardNum[1], remainCardNum[2]) : remainCardNum[0];
         if (newCard.nDan > 0) {
             for (int i = 0; i < newCard.nDan; i++) {
                 OutCard o = OutCard.dan(newCard.dan[i]);
@@ -268,7 +278,7 @@ public interface Strategy {
                 if (bp > Config.SMALL_CARD_MAP.get(o.getType())) {
                     cg.bDuizi[cg.nbDuizi] = newCard.duizi[i];
                     cg.nbDuizi++;
-                    if (ememyCardNum == 1 || out == null) {
+                    if (emermyCardNum == 1 || out == null) {
                         out = o;
                     }
                 } else {
@@ -292,7 +302,7 @@ public interface Strategy {
         if (n == 2) {
 
             for (OutCard o : small) {
-                OutCard bg = findBiggestCardFromMe(role, (o.getType() == CardType.DAN || o.getType() == CardType.DUI)?split.split(arr.cards):split.split(cards), remainCards, remainCardNum, o, true);
+                OutCard bg = findBiggestCardFromMe(role, (o.getType() == CardType.DAN || o.getType() == CardType.DUI) ? split.split(arr.cards) : split.split(cards), remainCards, remainCardNum, o, true);
                 if (bg != null && biggestProbability(role, remainCards, remainCardNum, bg, true) > Config.SMALL_CARD_MAP.get(bg.getType())) {
                     return o;
                 }
