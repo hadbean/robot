@@ -69,11 +69,11 @@ public class Config {
         SMALL_CARD_MAP.put(CardType.FEIJIWITHTAIL, 0.6);
         SMALL_CARD_MAP.put(CardType.ZHADAN, 0.6);
         SMALL_CARD_MAP.put(CardType.ZHADANWITHTAIL, 0.6);
-        SMALL_CARD_MAP.put(CardType.DAN, 0.80);
-        SMALL_CARD_MAP.put(CardType.DUI, 0.75);
-        SMALL_CARD_MAP.put(CardType.SANTIAOWITHTAIL, 0.75);
-        SMALL_CARD_MAP.put(CardType.SANTIAO, 0.75);
-        SMALL_CARD_MAP.put(CardType.LIANDUI, 0.60);
+        SMALL_CARD_MAP.put(CardType.DAN, 0.90);
+        SMALL_CARD_MAP.put(CardType.DUI, 0.85);
+        SMALL_CARD_MAP.put(CardType.SANTIAOWITHTAIL, 0.8);
+        SMALL_CARD_MAP.put(CardType.SANTIAO, 0.8);
+        SMALL_CARD_MAP.put(CardType.LIANDUI, 0.80);
         SMALL_CARD_MAP.put(CardType.SHUNZI, 0.8);
         SMALL_CARD_MAP.put(CardType.HUOJIAN, 0d);
 

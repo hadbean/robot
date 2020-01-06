@@ -30,8 +30,8 @@ public class Room {
         alreadyOutCards = new int[15];
         remainingCardNum = new int[]{20, 17, 17};
         players = new Player[3];
-        CardSet set = new CardSet();
-        int[][] cardGroup = set.shuffle();
+        Shuffle shuffle = new Shuffle();
+        int[][] cardGroup = shuffle.shuffle();
         int[] dp = new int[3];
         int k = 0;
         for (int i = 0; i < 3; i++) {
@@ -104,7 +104,7 @@ public class Room {
         alreadyOutCards = new int[15];
         remainingCardNum = new int[]{20, 17, 17};
         players = new Player[3];
-        CardSet set = new CardSet();
+        Shuffle set = new Shuffle();
         int[][] cardGroup = set.shuffle();
         for (int i = 0; i < 3; i++) {
             int[] cards = cardGroup[i];
@@ -157,10 +157,9 @@ public class Room {
                     System.out.print((round / 3) +"准备出牌：" + cardDesc(p, tmp0));
 
                     split.setRound(round / 3);
-                    CardArray rs = split.split(p.getCards());
                 }
 
-
+                CardArray rs = split.split(p.getCards());
                 OutCard tmp = p.out(round / 3, remainingCardNum, alreadyOutCards, outCard);
                 if (!debug) {
                     System.out.println("\t实际出牌：" + (tmp == null ? "PASS" : tmp.toString()));

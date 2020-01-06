@@ -322,16 +322,19 @@ public class ReceiveStrategy implements Strategy {
         }
         //农民接牌
         if (role != 0) {
-
             int s = arr.score();
-            if (best.getScore() > s) {
-                return best;
+            if (outcard.getRole() == 0){
+                if (best.getScore() > s) {
+                    return best;
+                }
             }
+
             if (outcard.getRole() == 2) {
                 if (best.getScore() < s) {
                     return null;
                 }
             }
+
             if (remainCardNums[0] > 7) {
                 if (s - best.getScore() > Config.MAX_ACCEPT_LOSS) {
                     return null;
@@ -343,6 +346,9 @@ public class ReceiveStrategy implements Strategy {
             }
 
             if (outcard.getRole() != 0) {
+                if (remainCardNums[outcard.getRole()] <=3){
+                    return null;
+                }
                 double b = biggestProbability(role, remainingCards, remainCardNums, best, false);
                 if (outcard.getType() == CardType.DAN || outcard.getType() == CardType.DUI) {
                     if (best.getCards()[0] > 11) {
@@ -414,10 +420,12 @@ public class ReceiveStrategy implements Strategy {
             if (bs > Config.GOOD_CARDS_VALUE) {
                 return best;
             }
-//            if (s - bs < CardArray.P[round]) {
-//                return best;
-//            }
-            //判断是否是拆了炸弹或者三条，如果是，判断是，并且并没有减少手数，则不接
+            //如果手数变差非常多，则不接
+            if (remainCardNums[outcard.getRole()] > 1){
+                if (s -  bs >  12){
+                    return null;
+                }
+            }
 
             //地主接牌规则,接地主下级时，尽可能接牌，因为该位置不会故意压牌，大部分情况下，不会由他来压牌，更多是为了跑牌
             if (outcard.getRole() == 1) {
@@ -535,8 +543,9 @@ public class ReceiveStrategy implements Strategy {
     private OutCard findBestOutCard(int role,int[] cards,CardArray origin,OutCard outCard,int[] remainCardNum, List<OutCard> outs, boolean biggerFirst) {
 
         OutCard out = null;
+        origin.score();
         int score = Integer.MIN_VALUE;
-        int hands = Integer.MAX_VALUE;
+        int hands = origin.hands;
         for (OutCard o : outs) {
             Strategy.removeCard(cards, EMPTY_CARDS, o, true);
             CardArray rs = split.split(cards);
@@ -544,7 +553,7 @@ public class ReceiveStrategy implements Strategy {
             int h = rs.hands;
             o.setHands(h);
             o.setScore(s);
-            if ((s > score || hands - h > 1) && shouldSplit(role,cards,origin,outCard,o,remainCardNum) != null) {
+            if ((s > score && shouldSplit(role,cards,origin,outCard,o,remainCardNum) != null) || hands - h > 1) {
                 out = o;
                 score = s;
                 hands = h;

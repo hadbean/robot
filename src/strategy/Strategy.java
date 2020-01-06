@@ -142,7 +142,7 @@ public interface Strategy {
                     o.setType(CardType.FEIJIWITHTAIL);
                     removeFrom(o.getTail(), arr.cards, true);
                 }
-                double bp = biggestProbability(role, remainCards, remainCardNum, o);
+                double bp = biggestProbability(role, remainCards, remainCardNum, o,remainCardNum[role] < 7);
                 o.setBp(bp);
                 if (bp < Config.SMALL_CARD_MAP.get(o.getType())) {
                     n++;
@@ -205,7 +205,7 @@ public interface Strategy {
                     }
                     o.setType(CardType.SANTIAOWITHTAIL);
                 }
-                double bp = biggestProbability(role, remainCards, remainCardNum, o);
+                double bp = biggestProbability(role, remainCards, remainCardNum, o,remainCardNum[role] < 7);
                 o.setBp(bp);
                 if (bp < Config.SMALL_CARD_MAP.get(o.getType())) {
                     n++;
@@ -228,7 +228,7 @@ public interface Strategy {
             change = true;
             for (int i = 0; i < arr.nLiandui; i++) {
                 OutCard o = OutCard.liandui(arr.liandui[i]);
-                double bp = biggestProbability(role, remainCards, remainCardNum, o);
+                double bp = biggestProbability(role, remainCards, remainCardNum, o,remainCardNum[role] < 7);
                 o.setBp(bp);
                 if (bp < Config.SMALL_CARD_MAP.get(o.getType())) {
                     n++;
@@ -251,7 +251,7 @@ public interface Strategy {
         if (newCard.nDan > 0) {
             for (int i = 0; i < newCard.nDan; i++) {
                 OutCard o = OutCard.dan(newCard.dan[i]);
-                double bp = biggestProbability(role, remainCards, remainCardNum, o);
+                double bp = biggestProbability(role, remainCards, remainCardNum, o,remainCardNum[role] < 7);
                 o.setBp(bp);
                 if (bp > Config.SMALL_CARD_MAP.get(o.getType())) {
                     cg.bDan[cg.nbDan] = newCard.dan[i];
@@ -273,7 +273,7 @@ public interface Strategy {
         if (newCard.nDuizi > 0) {
             for (int i = 0; i < newCard.nDuizi; i++) {
                 OutCard o = OutCard.duizi(newCard.duizi[i]);
-                double bp = biggestProbability(role, remainCards, remainCardNum, o);
+                double bp = biggestProbability(role, remainCards, remainCardNum, o,remainCardNum[role] < 7);
                 o.setBp(bp);
                 if (bp > Config.SMALL_CARD_MAP.get(o.getType())) {
                     cg.bDuizi[cg.nbDuizi] = newCard.duizi[i];
@@ -291,9 +291,9 @@ public interface Strategy {
         }
         if (arr.nEr > 1) {
             cg.nEr = arr.nEr;
-            cg.hasBigDui2 = biggestProbability(role, remainCards, remainCardNum, OutCard.duizi(12)) > Config.SMALL_CARD;
+            cg.hasBigDui2 = biggestProbability(role, remainCards, remainCardNum, OutCard.duizi(12),remainCardNum[role] < 7) > Config.SMALL_CARD;
             if (cg.nEr > 2) {
-                cg.hasBigSan2 = biggestProbability(role, remainCards, remainCardNum, OutCard.santiao(12)) > Config.SMALL_CARD;
+                cg.hasBigSan2 = biggestProbability(role, remainCards, remainCardNum, OutCard.santiao(12),remainCardNum[role] < 7) > Config.SMALL_CARD;
             }
         }
         if (n > 2) {
@@ -303,7 +303,7 @@ public interface Strategy {
 
             for (OutCard o : small) {
                 OutCard bg = findBiggestCardFromMe(role, (o.getType() == CardType.DAN || o.getType() == CardType.DUI) ? split.split(arr.cards) : split.split(cards), remainCards, remainCardNum, o, true);
-                if (bg != null && biggestProbability(role, remainCards, remainCardNum, bg, true) > Config.SMALL_CARD_MAP.get(bg.getType())) {
+                if (bg != null && biggestProbability(role, remainCards, remainCardNum, bg,remainCardNum[role] < 7) > Config.SMALL_CARD_MAP.get(bg.getType())) {
                     return o;
                 }
             }
@@ -336,6 +336,11 @@ public interface Strategy {
             } else if (cg.hasBigDui2) {
                 return OutCard.duizi(12);
             } else if (arr.nZhadan > 0) {
+                if (n == 1){
+                    if (small.get(0).getLength() < emermyCardNum){
+                        return small.get(0);
+                    }
+                }
                 return OutCard.zhadan(arr.zhadan[0]);
             } else if (arr.nHuojian > 0) {
                 return OutCard.huojian();
@@ -733,7 +738,7 @@ public interface Strategy {
                         int n = 1;
                         cards[x.getCards()[0]] -= 3;
                         int k = outCard.getTail().length;
-                        boolean flag = findTail(cards, x, k, n, false);
+                        boolean flag = findTail(cards, x, k, n, force);
                         cards[x.getCards()[0]] += 3;
 
                         if (!flag) {
@@ -847,6 +852,16 @@ public interface Strategy {
                             }
                         }
                     }
+                }
+            }
+            if (force){
+                if (arr.nDuizi > 0 || arr.nEr > 0){
+                    if (arr.nDuizi > 0){
+                        tail[0] = arr.duizi[0];
+                    }else {
+                        tail[0] = 12;
+                    }
+                    idx++;
                 }
             }
             if (idx < n) {
@@ -1008,7 +1023,7 @@ public interface Strategy {
             p = max * 1.0 / (max + num2);
         }
 
-        List<OutCard> bigger = findBiggerCards(remainingCards, max, outCard, force, true);
+        List<OutCard> bigger = findBiggerCards(remainingCards, max, outCard, true, true);
         if (bigger == null || bigger.size() == 0) {
             return 1;
         }

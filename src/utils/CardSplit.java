@@ -107,7 +107,7 @@ public class CardSplit {
         m = 0;
         index = 0;
         for (int i = 0; i < length - 4; i++) {
-            if (cards[i] == 2 && cards[i + 1] == 2) {
+            if (cards[i] >= 2 && cards[i + 1] >= 2) {
                 n++;
                 index = i + 1;
             } else if (n > 2) {
@@ -138,6 +138,24 @@ public class CardSplit {
                 }
             }
         }
+        //是否拆连队
+        if (rs.nLiandui > 0){
+            for (int[] liandui : rs.liandui){
+                if (liandui[1] > 3){
+                    if (cards[liandui[1]] == 1 || cards[liandui[0] - liandui[1] + 1] == 1){
+                        if (cards[liandui[1]] == 1){
+                            cards[liandui[0]] += 2;
+                            liandui[0] -= 1;
+                            liandui[1] -= 1;
+                        }else {
+                            cards[liandui[0] - liandui[1] + 1] += 2;
+                            liandui[1] -= 1;
+                        }
+                    }
+                }
+            }
+
+        }
 
         //找三张
         for (int i = 0; i < length - 3; i++) {
@@ -157,6 +175,8 @@ public class CardSplit {
                 ShunziSplit.merge(rs);
             }
         }
+
+
         //找出对子和单
         for (int i = 0; i < length; i++) {
             if (cards[i] > 0) {
