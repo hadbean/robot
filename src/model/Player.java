@@ -2,6 +2,7 @@ package model;
 
 import config.Config;
 import constant.CardType;
+import constant.OutCardMode;
 import strategy.OutCardStrategy;
 import strategy.ReceiveStrategy;
 import strategy.Strategy;
@@ -43,7 +44,7 @@ public class Player {
             } else {
                 OutCardStrategy strategy = new OutCardStrategy(1);
                 int[] remainingCards = strategy.remainingCardsExceptMe(cards, new int[15]);
-                if (strategy.allBig2(role, cards, remainingCards, new int[]{20, 17, 17}) != null) {
+                if (strategy.allBig2(role, cards, remainingCards, new int[]{20, 17, 17}, false, null) != null) {
                     return true;
                 }
             }
@@ -65,6 +66,40 @@ public class Player {
         int score = callScore();
         if (score > s) {
             return score;
+        }
+
+        int[] remainingCards = strategy.remainingCardsExceptMe(cards, new int[15]);
+
+        for (int i = 0; i < 12; i++) {
+            if (remainingCards[i] > 0) {
+                Strategy.removeFrom(new int[]{i}, cards, false);
+                score = callScore();
+                if (score > s) {
+                    if (Math.random() > Config.JDZ[remainingCards[i] - 1]) {
+                        Strategy.removeFrom(new int[]{i}, cards, true);
+                        return score;
+                    }
+                }
+                Strategy.removeFrom(new int[]{i}, cards, true);
+            }
+        }
+
+        return 0;
+    }
+
+    public int jiaoDiZhu(int s, int[] dipai) {
+
+        if (s >= 3) {
+            return 0;
+        }
+        OutCardStrategy strategy = new OutCardStrategy(0);
+        Strategy.removeFrom(dipai, cards, false);
+        int score = callScore();
+        Strategy.removeFrom(dipai, cards, true);
+        if (score > s) {
+            return score;
+        } else if (score == s) {
+            return score + 1;
         }
 
         int[] remainingCards = strategy.remainingCardsExceptMe(cards, new int[15]);
@@ -120,12 +155,12 @@ public class Player {
                 return 3;
             }
         }
-        if (maxCard == 5){
-            if (arr.hands <= 5){
+        if (maxCard == 5) {
+            if (arr.hands <= 5) {
                 return 3;
-            }else if (arr.hands <= 6){
+            } else if (arr.hands <= 6) {
                 return 2;
-            }else {
+            } else {
                 return 1;
             }
         }
@@ -138,28 +173,46 @@ public class Player {
     }
 
     /**
-     * @param round            第几圈
-     * @param remainingCardNum 每个玩家剩余手牌数量
-     * @param alreadyOutCards  全局已经出的牌
-     * @param outCard          出的牌，最近出的牌，不包含PASS
+     * @param round
+     * @param remainingCardNum
+     * @param alreadyOutCards
+     * @param outCard
+     * @param playerCards      所有人的牌
+     * @param roles            相应位置是否是机器人  int[]{0,1,1} 表示 0为真人, 1为机器人呢
      * @return
      */
-    public OutCard out(int round, int[] remainingCardNum, int[] alreadyOutCards, OutCard outCard) {
+    public OutCard out(int round, int[] remainingCardNum, int[] alreadyOutCards, OutCard outCard, int[][] playerCards, int[] roles) {
 
+        //如果地主是机器人，则地主要赢,如果地主是真人，则农民开天眼让地主输，让队友更好赢
+        if (role == 0 && roles[role] == 1) {
+            return out(round, remainingCardNum, alreadyOutCards, outCard, playerCards);
+        } else if (role != 0 && roles[0] == 0 && roles[role] == 1) {
+            return out(round, remainingCardNum, alreadyOutCards, outCard, playerCards);
+        }
+
+        return out(round, remainingCardNum, alreadyOutCards, outCard);
+    }
+
+    public OutCard out(int round, int[] remainingCardNum, int[] alreadyOutCards, OutCard outCard, int[][] playerCards) {
 
         if (outCard != null && outCard.getRole() != role) {
-            return receive(round, remainingCardNum, alreadyOutCards, outCard);
+            return receive(round, remainingCardNum, alreadyOutCards, outCard, playerCards);
         }
 
         CardArray rs = new CardSplit().split(cards);
         rs.score();
         OutCardStrategy strategy = new OutCardStrategy(round);
+        if (playerCards != null) {
+            strategy.godView = true;
+            strategy.playCards = playerCards;
+        }
 
         //判断是否一手牌出完
         OutCard out = OutCardStrategy.oneHand(rs, remainingCardNum[role]);
         int emeryCarNum = role == 0 ? Math.min(remainingCardNum[1], remainingCardNum[2]) : remainingCardNum[0];
 
         int[] remainingCards = strategy.remainingCardsExceptMe(cards, alreadyOutCards);
+
 
         if (out != null) {
             //在能一手出完的情况下，判断炸弹带牌是否要出
@@ -168,7 +221,7 @@ public class Player {
                     return out;
                 } else {
                     int l = out.getTail().length / 2;
-                    if (l == 1 && out.getTail()[0] == out.getTail()[1]){
+                    if (l == 1 && out.getTail()[0] == out.getTail()[1]) {
                         l = 2;
                     }
                     if (role == 0) {
@@ -188,9 +241,9 @@ public class Player {
         }
 
         //判断是否只剩下一手小牌，那么先出大牌
-        out = strategy.allBig2(role, cards, remainingCards, remainingCardNum);
+        out = strategy.allBig2(role, cards, remainingCards, remainingCardNum, strategy.godView, strategy.playCards);
         if (out != null) {
-            out.setMode("allBig");
+            out.setMode(OutCardMode.ALLBIG);
             return out;
         }
         if (emeryCarNum == 2) {
@@ -203,7 +256,7 @@ public class Player {
                 }
             }
             if (out != null) {
-                out.setMode("forceEnemySingle");
+                out.setMode(OutCardMode.FORCEONLYONE);
                 return out;
             }
         }
@@ -211,7 +264,7 @@ public class Player {
         if (role == 1 && remainingCardNum[2] == 1) {
             out = strategy.letFriend(cards);
             if (out != null) {
-                out.setMode("letFriend");
+                out.setMode(OutCardMode.LETFRIEND);
                 return out;
             }
         }
@@ -224,33 +277,38 @@ public class Player {
                 }
             }
         }
-        OutCard outSL = strategy.smallAndLongFirst(rs, role, remainingCards, remainingCardNum);
-        if (outSL != null && (outSL.getBp() < Config.SMALL_CARD_MAP.get(outSL.getType()) || outSL.getType() == CardType.FEIJI || outSL.getType() == CardType.FEIJIWITHTAIL)) {
-            outSL.setMode("smallAndLongFirst");
+        OutCard outSL = strategy.smallAndLongFirst(rs, role, remainingCards, alreadyOutCards, remainingCardNum);
+        if (outSL != null && outSL.getDangerLevel() < 8 && (outSL.getBp() < Config.SMALL_CARD_MAP.get(outSL.getType()) || outSL.getType() == CardType.FEIJI || outSL.getType() == CardType.FEIJIWITHTAIL)) {
+            outSL.setMode(OutCardMode.SMALLANDLONGFIRST);
             return outSL;
         }
         boolean fewHand = false;
         if (emeryCarNum == 1) {
             out = strategy.enemyLastOne(rs, role, remainingCardNum);
             if (out != null) {
-                out.setMode("enemyLastOne");
+                out.setMode(OutCardMode.ENEMYLASTONE);
                 return out;
             }
         }
         fewHand = strategy.fewPoke(rs, remainingCardNum[role]);
         if (fewHand && outSL != null) {
-            return outSL;
+            if (playerCards == null || outSL.getDangerLevel() < 8) {
+                return outSL;
+            }
         }
 
-        if (fewHand == false && outCard != null){
-            if (outCard.getRole() == role && outCard.getType() == CardType.DAN){
+        if (!fewHand && outCard != null) {
+            if (outCard.getRole() == role && outCard.getType() == CardType.DAN) {
                 fewHand = true;
             }
         }
-        if (emeryCarNum == 1){
+        if (emeryCarNum == 1) {
             fewHand = true;
         }
-        out = strategy.smallFirst(rs, role, remainingCards, remainingCardNum, fewHand);
+        if (fewHand && outSL != null && outSL.getDangerLevel() < 8) {
+            return outSL;
+        }
+        out = strategy.smallFirst(rs, role, remainingCards, alreadyOutCards, remainingCardNum, fewHand);
         if (out == null && outSL == null) {
             throw new RuntimeException("没法主动出牌异常");
         }
@@ -259,19 +317,39 @@ public class Player {
         } else if (outSL == null) {
             return out;
         } else {
+            if (out.getDangerLevel() > 7 && out.getDangerLevel() > 7) {
+                return outSL.getDangerLevel() > out.getDangerLevel() ? out : outSL;
+            } else if (out.getDangerLevel() > 7) {
+                return outSL;
+            } else if (outSL.getDangerLevel() > 7) {
+                return out;
+            }
             return out.getBp() > outSL.getBp() ? outSL : out;
         }
+    }
 
-
+    /**
+     * @param round            第几圈
+     * @param remainingCardNum 每个玩家剩余手牌数量
+     * @param alreadyOutCards  全局已经出的牌
+     * @param outCard          出的牌，最近出的牌，不包含PASS
+     * @return
+     */
+    public OutCard out(int round, int[] remainingCardNum, int[] alreadyOutCards, OutCard outCard) {
+        return out(round, remainingCardNum, alreadyOutCards, outCard, null);
     }
 
 
-    public OutCard receive(int round, int[] remainingCardNum, int[] alreadyOutCards, OutCard outCard) {
+    public OutCard receive(int round, int[] remainingCardNum, int[] alreadyOutCards, OutCard outCard, int[][] playerCards) {
 
         ReceiveStrategy strategy = new ReceiveStrategy(round);
+        if (playerCards != null) {
+            strategy.godView = true;
+            strategy.playCards = playerCards;
+        }
         OutCard out = strategy.oneHand(cards, remainingCardNum[role], outCard);
         if (out != null) {
-            out.setMode("oneHand");
+            out.setMode(OutCardMode.ONEHAND);
             return out;
         }
 
@@ -289,39 +367,57 @@ public class Player {
 
         out = strategy.zhaAndWin(role, cards, remainCards, remainingCardNum, outCard);
         if (out != null) {
-            out.setMode("zhaAndWin");
+            out.setMode(OutCardMode.ZHAANDWIN);
             return out;
         }
-
-
-        out = strategy.jieAndWin(role, cards, remainCards, outs, remainingCardNum);
-
-        if (out != null) {
-            out.setMode("jieAndWin");
-            return out;
-        }
-
-        int ememyNum = role == 0 ? Math.min(remainingCardNum[1], remainingCardNum[2]) : remainingCardNum[0];
-        if (ememyNum == 1 && outCard.getType() == CardType.DAN) {
-            out = strategy.enemyLastOne(role, cards, outCard, remainCards, remainingCardNum, outs);
-            if (out != null) {
-                out.setMode("enemyLastOne");
-                return out;
-            }
-        }
-
-        //只剩两牌
-
         //队友只剩下一张牌，且在我下家
         // 则不用管自己的牌型，直接顶地主牌，如果是队友的牌，则手牌如果有小于9的牌，直接炸弹走起
         if (role == 1 && remainingCardNum[2] < 2) {
             out = strategy.letFriend(cards, outCard, Config.MIN_EXCEPT_1, outs);
             if (out != null) {
-                out.setMode("letFriend");
+                out.setMode(OutCardMode.LETFRIEND);
                 return out;
             }
         }
-        return strategy.normal(cards, role, outCard, remainCards, remainingCardNum, outs);
+
+        out = strategy.jieAndWin(role, cards, remainCards, outs, remainingCardNum);
+        if (out != null) {
+            out.setMode(OutCardMode.JIEANDWIN);
+            return out;
+        }
+        int ememyNum = role == 0 ? Math.min(remainingCardNum[1], remainingCardNum[2]) : remainingCardNum[0];
+        if (ememyNum == 1 && outCard.getType() == CardType.DAN) {
+            out = strategy.enemyLastOne(role, cards, outCard, remainCards, remainingCardNum, outs);
+            if (out != null) {
+                out.setMode(OutCardMode.ENEMYLASTONE);
+                return out;
+            }
+        }
+        out = strategy.normal(cards, role, outCard, remainCards, alreadyOutCards, remainingCardNum, outs);
+        if (role == 0 || out == null){
+            return out;
+        }else {
+            if (out.getFitLevel() < 8){ // 当接了效果一般的情况下,判断不接的情况会不会更好
+                //是否要接队友的牌
+                if (role != 0 && strategy.godView) {
+                    if (role == 1 ||  (role == 2 && outCard.getRole() == 1)) {
+                        Strategy.removeCard(Strategy.EMPTY_CARDS,alreadyOutCards,outCard,false);
+                        remainingCardNum[outCard.getRole()] += outCard.getLength();
+                        int result = strategy.letEnemyWin(round, role, outCard, playerCards, alreadyOutCards, remainingCardNum);
+                        remainingCardNum[outCard.getRole()] -= outCard.getLength();
+                        Strategy.removeCard(Strategy.EMPTY_CARDS,alreadyOutCards,outCard,true);
+                        if ((outCard.getRole() == 0 &&  result == 0) || result == 1){
+                            System.out.println("不接让队友赢");
+                            return null;
+                        }
+                    }
+                }
+
+            }
+
+        }
+
+        return out;
     }
 
     public int getRole() {

@@ -14,11 +14,18 @@ import java.util.List;
 public class OutCardStrategy implements Strategy {
 
 
-    private int[] alearyOutCards;
     private int round;
+    public boolean godView;
+    public int[][] playCards;
 
     public OutCardStrategy(int round) {
         this.round = round;
+        split.setRound(round);
+    }
+
+    public OutCardStrategy(int round,boolean godView) {
+        this.round = round;
+        this.godView = godView;
         split.setRound(round);
     }
 
@@ -197,7 +204,7 @@ public class OutCardStrategy implements Strategy {
     }
 
     //有些小的顺子、连对、飞机	先出这些
-    public OutCard smallAndLongFirst(CardArray cards, int role, int[] remainingCards, int[] remainCardNum) {
+    public OutCard smallAndLongFirst(CardArray cards, int role, int[] remainingCards,int[] alreadyOutCards, int[] remainCardNum) {
         double mp = 0;
         OutCard out = null;
         List<OutCard> outs = new ArrayList<>(3);
@@ -206,91 +213,10 @@ public class OutCardStrategy implements Strategy {
             Strategy.removeCard(cards.cards, EMPTY_CARDS, o1, true);
             if (findTail(cards.cards, o1, 1, cards.feiji[0][1], false) || findTail(cards.cards, o1, 2, cards.feiji[0][1], false)) {
                 Strategy.removeCard(cards.cards, EMPTY_CARDS, o1, false);
-//                Strategy.removeFrom(o1.getTail(),cards.cards,true);
                 o1.setType(CardType.FEIJIWITHTAIL);
             } else {
                 Strategy.removeCard(cards.cards, EMPTY_CARDS, o1, false);
             }
-//            int mbp = 0;
-//            if (cards.nDan >= cards.feiji[0][1]) {
-//                int n = cards.feiji[0][1];
-//                int[] tail = new int[n];
-//                for (int i = 0; i < n; i++) {
-//                    tail[i] = cards.dan[i];
-//                    mbp += cards.dan[i] - Config.REF;
-//                }
-//
-//                o1 = OutCard.feijiWithTail(cards.feiji[0], tail);
-//
-//            }
-//            if (cards.nDuizi >= cards.feiji[0][1]) {
-//                int mbp2 = 0;
-//                int n = cards.feiji[0][1];
-//                int[] tail = new int[2 * n];
-//                for (int i = 0; i < n; i++) {
-//
-//                    tail[2 * i] = cards.duizi[i];
-//                    tail[2 * i + 1] = cards.duizi[i];
-//                    mbp2 += cards.duizi[i] > Config.REF ? (cards.duizi[i] - Config.REF) * 3 / 2 : (cards.duizi[i] - Config.REF);
-//                }
-//                if ((o1 != null && mbp2 < mbp) || o1 == null) {
-//                    o1 = OutCard.feijiWithTail(cards.feiji[0], tail);
-//                }
-//            }
-//            if (o1 == null && (cards.nDuizi * 2 + cards.nDan >= cards.feiji[0][1])) {
-//                if (cards.feiji[0][1] == 2) {
-//                    int[] tail = new int[2];
-//                    if (cards.nDan == 1) {
-//                        if (cards.dan[0] > cards.duizi[0]) {
-//                            tail[0] = cards.duizi[0];
-//                            tail[1] = cards.duizi[0];
-//                        } else {
-//                            tail[0] = cards.dan[0];
-//                            tail[1] = cards.duizi[0];
-//                        }
-//                    } else {
-//                        tail[0] = cards.duizi[0];
-//                        tail[1] = cards.duizi[0];
-//                    }
-//                    o1 = OutCard.feijiWithTail(cards.feiji[0], tail);
-//                } else if (cards.feiji[0][1] == 3) {
-//                    int[] tail = new int[3];
-//                    if (cards.nDan == 1) {
-//                        if (cards.nDuizi == 1 || cards.dan[0] < cards.duizi[0]) {
-//                            tail[0] = cards.duizi[0];
-//                            tail[1] = cards.duizi[0];
-//                            tail[2] = cards.dan[0];
-//                        } else if (cards.nDuizi > 1) {
-//                            if (cards.dan[0] < cards.duizi[1]) {
-//                                tail[0] = cards.duizi[0];
-//                                tail[1] = cards.duizi[0];
-//                                tail[2] = cards.dan[0];
-//                            } else {
-//                                tail[0] = cards.duizi[0];
-//                                tail[1] = cards.duizi[0];
-//                                tail[2] = cards.duizi[1];
-//                            }
-//                        }
-//                    } else if (cards.nDan == 0) {
-//                        tail[0] = cards.duizi[0];
-//                        tail[1] = cards.duizi[0];
-//                        tail[2] = cards.duizi[1];
-//                    } else if (cards.nDan == 2) {
-//                        if (cards.dan[1] < cards.duizi[0]) {
-//                            tail[0] = cards.dan[0];
-//                            tail[1] = cards.dan[1];
-//                            tail[2] = cards.duizi[0];
-//                        } else {
-//                            tail[0] = cards.dan[0];
-//                            tail[1] = cards.duizi[0];
-//                            tail[2] = cards.duizi[0];
-//                        }
-//                    }
-//                    o1 = OutCard.feijiWithTail(cards.feiji[0], tail);
-//                }
-//            } else if (o1 == null) {
-//                o1 = OutCard.feiji(cards.feiji[0]);
-//            }
             outs.add(o1);
         }
         if (cards.nLiandui > 0) {
@@ -303,9 +229,13 @@ public class OutCardStrategy implements Strategy {
             return null;
         }
         double minBp = 1.1;
+        int dangerLevel = Integer.MAX_VALUE;
         for (OutCard o : outs) {
             double bp = biggestProbability(role, remainingCards, remainCardNum, o);
-            if (bp < minBp) {
+            if (godView){
+                letEnemyWin(round,role,o,playCards,alreadyOutCards,remainCardNum);
+            }
+            if (bp < minBp && (o.getDangerLevel() < dangerLevel || o.getDangerLevel() < 8)) {
                 minBp = bp;
                 out = o;
             }
@@ -365,7 +295,7 @@ public class OutCardStrategy implements Strategy {
     }
 
     //以小牌优先
-    public OutCard smallFirst(CardArray cards, int role, int[] remainingCards, int[] remainCardNum, boolean fewHand) {
+    public OutCard smallFirst(CardArray cards, int role, int[] remainingCards,int[] alearyOutCards, int[] remainCardNum, boolean fewHand) {
         List<OutCard> outs = new ArrayList<>(3);
 
         if (cards.nSantiao > 0) {
@@ -380,28 +310,18 @@ public class OutCardStrategy implements Strategy {
                 o = OutCard.santiao(cards.santiao[0]);
             }
             if (o != null) {
-                o.setBp(biggestProbability(role, remainingCards, remainCardNum, o, false));
-                Strategy.removeCard(cards.cards, EMPTY_CARDS, o, true);
-                o.setScore(split.split(cards.cards).score());
-                Strategy.removeCard(cards.cards, EMPTY_CARDS, o, false);
                 outs.add(o);
-            }
-            if (o != null  && fewHand){
-                return o;
             }
         }
 
 
         if (cards.nDan > 0) {
             OutCard o = OutCard.dan(cards.dan[0]);
-            o.setBp(biggestProbability(role, remainingCards, remainCardNum, o, false));
-            Strategy.removeCard(cards.cards, EMPTY_CARDS, o, true);
-            o.setScore(split.split(cards.cards).score());
-            Strategy.removeCard(cards.cards, EMPTY_CARDS, o, false);
-            outs.add(OutCard.dan(cards.dan[0]));
+            outs.add(o);
         }
         if (cards.nDuizi > 0) {
-            outs.add(OutCard.duizi(cards.duizi[0]));
+            OutCard o = OutCard.duizi(cards.duizi[0]);
+            outs.add(o);
         }
 
         OutCard out = null;
@@ -419,10 +339,13 @@ public class OutCardStrategy implements Strategy {
             double maxC = Integer.MIN_VALUE;
             for (OutCard o : outs) {
                 o.setBp(biggestProbability(role, remainingCards, remainCardNum, o, false));
+                if (godView){
+                    letEnemyWin(round,role,o,playCards,alearyOutCards,remainCardNum);
+                }
                 if (o.getBp() < Config.SMALL_CARD_MAP.get(o.getType())){
                     //是否有手牌可以接回来
                     OutCard bg = findBiggestCardFromMe(role, cards, remainingCards, remainCardNum, o,cards.hands < 4);
-                    if (bg != null && biggestProbability(role, remainingCards, remainCardNum, bg, true) > Config.SMALL_CARD_MAP.get(bg.getType())) {
+                    if (bg != null && (godView? biggestProbability(role, playCards, remainCardNum, bg): biggestProbability(role, remainingCards, remainCardNum, bg, true)) > Config.SMALL_CARD_MAP.get(bg.getType())) {
                         o.setRecall(true);
                     }
                 }
@@ -448,7 +371,7 @@ public class OutCardStrategy implements Strategy {
                     minS = o.getScore();
                 }
             }
-            int max = 0;
+            int max = Integer.MIN_VALUE;
 
             for (OutCard o : outs) {
                 int k = 0;
@@ -466,6 +389,9 @@ public class OutCardStrategy implements Strategy {
                     k += 2;
                 } else if (o.getCards()[0] < minC) {
                     k++;
+                }
+                if (o.getDangerLevel() > 7){
+                    k -= o.getDangerLevel();
                 }
                 if (out != null && !out.isRecall() && o.isRecall()){
                     out = o;

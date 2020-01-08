@@ -1,6 +1,7 @@
 package model;
 
 import constant.CardType;
+import constant.OutCardMode;
 
 /**
  * 出牌类型定义
@@ -13,9 +14,11 @@ public class OutCard {
     private int[] tail;
     private int role;
     private CardType type;
-    private String mode;
+    private OutCardMode mode = OutCardMode.OTHER;
     private double bp;
     private boolean recall;
+    private int dangerLevel;
+    private int fitLevel;
 
 
     private int score;
@@ -75,11 +78,11 @@ public class OutCard {
         this.bp = bp;
     }
 
-    public String getMode() {
+    public OutCardMode getMode() {
         return mode;
     }
 
-    public void setMode(String mode) {
+    public void setMode(OutCardMode mode) {
         this.mode = mode;
     }
 
@@ -97,6 +100,22 @@ public class OutCard {
 
     public void setRecall(boolean recall) {
         this.recall = recall;
+    }
+
+    public int getDangerLevel() {
+        return dangerLevel;
+    }
+
+    public void setDangerLevel(int dangerLevel) {
+        this.dangerLevel = dangerLevel;
+    }
+
+    public int getFitLevel() {
+        return fitLevel;
+    }
+
+    public void setFitLevel(int fitLevel) {
+        this.fitLevel = fitLevel;
     }
 
     @Override

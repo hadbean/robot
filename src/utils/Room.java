@@ -58,7 +58,7 @@ public class Room {
         int s = 0;
         int who = 0;
         for (int i = 0; i < 3; i++) {
-            int s2 = players[round % 3].jiaoDiZhu(s);
+            int s2 = players[round % 3].jiaoDiZhu(s,dp);
             if (s2 > s){
                 s = s2;
                 who = round % 3;
@@ -129,6 +129,10 @@ public class Room {
         CardSplit split = new CardSplit();
         OutCard outCard = null;
         int round = 0;
+        int[][] playerCards = new int[3][];
+        playerCards[0] = players[0].getCards();
+        playerCards[1] = players[1].getCards();
+        playerCards[2] = players[2].getCards();
         String cardStr = cardDesc(players[0], null) + "\n" + cardDesc(players[1], null) + "\n" + cardDesc(players[2], null) + "\n";
         try {
             Player p = players[round % 3];
@@ -137,7 +141,7 @@ public class Room {
             int hands = rss.hands;
             int maxNum = rss.maxCardNum();
 
-            outCard = p.out(round / 3, remainingCardNum, alreadyOutCards, outCard);
+            outCard = p.out(round / 3, remainingCardNum, alreadyOutCards, outCard,playerCards);
             if (outCard.getType() == CardType.ZHADAN){
                 throw new RuntimeException("出牌混乱");
             }
@@ -149,18 +153,20 @@ public class Room {
                 return p.getRole();
             }
 
-
+            int[] roles = new int[]{0,1,1};
             while (true) {
                 p = players[round % 3];
                 if (!debug) {
-                    OutCard tmp0 = p.out(round / 3, remainingCardNum, alreadyOutCards, outCard);
+                    OutCard tmp0 = p.out(round / 3, remainingCardNum, alreadyOutCards, outCard,playerCards,roles);
+//                    OutCard tmp0 = p.out(round / 3, remainingCardNum, alreadyOutCards, outCard);
                     System.out.print((round / 3) +"准备出牌：" + cardDesc(p, tmp0));
 
                     split.setRound(round / 3);
                 }
 
                 CardArray rs = split.split(p.getCards());
-                OutCard tmp = p.out(round / 3, remainingCardNum, alreadyOutCards, outCard);
+                OutCard tmp = p.out(round / 3, remainingCardNum, alreadyOutCards, outCard,playerCards,roles);
+//                OutCard tmp = p.out(round / 3, remainingCardNum, alreadyOutCards, outCard);
                 if (!debug) {
                     System.out.println("\t实际出牌：" + (tmp == null ? "PASS" : tmp.toString()));
                 }
@@ -261,11 +267,11 @@ public class Room {
         int[] wins = new int[3];
         Room room = new Room();
         int[] call = new int[2];
-        int i = 1;
+        int i = 100000;
         while (i > 0) {
 //            room.init();
             if (room.initJDZ()) {
-                wins[room.play(false)] += 1;
+                wins[room.play(true)] += 1;
                 call[0] ++;
                 i --;
             }else {

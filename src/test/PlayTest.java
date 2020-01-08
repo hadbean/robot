@@ -34,9 +34,9 @@ public class PlayTest {
 //                "主下:Q,2,2,\tDUI:9,9 \t实际出牌：9,9\n" +
 //                "主上:9,9,2,\tDUI:A,A \t实际出牌：A,A";
 
-        String s = "地主:3,3,3,4,5,5,6,7,7,8,9,9,10,J,Q,K,K,A,2,JOKER1,\tSANTIAOWITHTAIL:3,3,3,5, \n" +
-                "0准备出牌：主下:4,4,4,5,6,7,8,9,10,10,J,J,Q,Q,K,A,2,\tSANTIAOWITHTAIL:4,4,4,5, \t实际出牌：4,4,4,5,\n" +
-                "0准备出牌：主上:3,5,6,6,7,8,8,9,10,J,Q,K,A,A,2,2,JOKER2,\tPASS\t实际出牌：PASS";
+        String s = "地主:3,4,4,5,6,6,7,7,8,8,8,9,10,J,Q,A,2,2,2,JOKER1,\tPASS\n" +
+                "主下:3,4,5,5,5,6,7,9,9,10,J,J,Q,Q,A,A,JOKER2,\tPASS\n" +
+                "主上:3,3,4,6,7,8,9,10,10,J,Q,K,K,K,K,A,2,\tPASS";
         String[] ss = s.split("\n");
         if (ss.length == 3) {
             for (int i = 0; i < s.split("\n").length; i++) {
