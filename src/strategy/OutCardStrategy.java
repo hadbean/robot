@@ -16,6 +16,7 @@ public class OutCardStrategy implements Strategy {
 
     private int round;
     public boolean godView;
+    public boolean takeALook;
     public int[][] playCards;
 
     public OutCardStrategy(int round) {
@@ -23,9 +24,10 @@ public class OutCardStrategy implements Strategy {
         split.setRound(round);
     }
 
-    public OutCardStrategy(int round,boolean godView) {
+    public OutCardStrategy(int round,boolean godView, boolean takeALook) {
         this.round = round;
         this.godView = godView;
+        this.takeALook = takeALook;
         split.setRound(round);
     }
 
@@ -233,7 +235,12 @@ public class OutCardStrategy implements Strategy {
         for (OutCard o : outs) {
             double bp = biggestProbability(role, remainingCards, remainCardNum, o);
             if (godView){
-                letEnemyWin(round,role,o,playCards,alreadyOutCards,remainCardNum);
+                o.setRole(role);
+                int result = letEnemyWin(round,role,o,playCards,alreadyOutCards,remainCardNum);
+                if (result == 1){
+                    System.out.println("主动让队友赢");
+                    return o;
+                }
             }
             if (bp < minBp && (o.getDangerLevel() < dangerLevel || o.getDangerLevel() < 8)) {
                 minBp = bp;
@@ -340,7 +347,11 @@ public class OutCardStrategy implements Strategy {
             for (OutCard o : outs) {
                 o.setBp(biggestProbability(role, remainingCards, remainCardNum, o, false));
                 if (godView){
-                    letEnemyWin(round,role,o,playCards,alearyOutCards,remainCardNum);
+                    o.setRole(role);
+                    int result = letEnemyWin(round,role,o,playCards,alearyOutCards,remainCardNum);
+                    if(result == 1){
+                        return o;
+                    }
                 }
                 if (o.getBp() < Config.SMALL_CARD_MAP.get(o.getType())){
                     //是否有手牌可以接回来

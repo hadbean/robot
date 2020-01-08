@@ -126,6 +126,7 @@ public class Room {
     }
 
     public int play(boolean debug) {
+        int[] roles = new int[]{0,1,1};
         CardSplit split = new CardSplit();
         OutCard outCard = null;
         int round = 0;
@@ -141,7 +142,7 @@ public class Room {
             int hands = rss.hands;
             int maxNum = rss.maxCardNum();
 
-            outCard = p.out(round / 3, remainingCardNum, alreadyOutCards, outCard,playerCards);
+            outCard = p.out(round / 3, remainingCardNum, alreadyOutCards, outCard,playerCards,roles);
             if (outCard.getType() == CardType.ZHADAN){
                 throw new RuntimeException("出牌混乱");
             }
@@ -153,7 +154,7 @@ public class Room {
                 return p.getRole();
             }
 
-            int[] roles = new int[]{0,1,1};
+
             while (true) {
                 p = players[round % 3];
                 if (!debug) {

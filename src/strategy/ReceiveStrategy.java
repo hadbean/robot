@@ -12,6 +12,7 @@ public class ReceiveStrategy implements Strategy {
     //是否可以一手出完
     public int round;
     public boolean godView;
+    public boolean takeALook;
     public int[][] playCards;
 
 
@@ -182,7 +183,7 @@ public class ReceiveStrategy implements Strategy {
             double bp = this.godView ? biggestProbability(role, playCards, remainingCardNum, x) : biggestProbability(role, remainCards, remainingCardNum, x);
             if (bp > Config.SMALL_CARD) {
 
-                OutCard out = allBig2(role, cards, remainCards, remainingCardNum, godView, playCards);
+                OutCard out = allBig2(role, cards, remainCards, remainingCardNum, takeALook, playCards);
                 if (out != null) {
                     CardArray arr = split.split(cards);
                     x.setScore(arr.score());
@@ -208,7 +209,7 @@ public class ReceiveStrategy implements Strategy {
                 OutCard o = findBiggestCardFromMe(role, arr, remainCards, remainingCardNum, x, true);
                 if (o != null) {
                     Strategy.removeCard(cards, EMPTY_CARDS, o, true);
-                    OutCard out = allBig2(role, cards, remainCards, remainingCardNum, godView, playCards);
+                    OutCard out = allBig2(role, cards, remainCards, remainingCardNum, takeALook, playCards);
                     if (out != null) {
                         x.setScore(arr.score());
                         x.setHands(arr.hands);
@@ -264,7 +265,7 @@ public class ReceiveStrategy implements Strategy {
                     }
                 }
                 if (rs.nZhadan > 0 || rs.nHuojian > 0) {
-                    OutCard tmp = allBig2(role, cards, remainCards, remainingCardNum, godView, playCards);
+                    OutCard tmp = allBig2(role, cards, remainCards, remainingCardNum, takeALook, playCards);
                     if (tmp != null) {
                         return rs.nZhadan > 0 ? OutCard.zhadan(rs.zhadan[0]) : OutCard.huojian();
                     }
@@ -648,6 +649,7 @@ public class ReceiveStrategy implements Strategy {
             }
             Strategy.removeCard(cards, EMPTY_CARDS, o, false);
             if (changed) {
+                out.setRole(role);
                 if (godView) {
                     if (best == null) {
                         letEnemyWin(round, role, out, playCards, alreadyOutCards, remainCardNum);

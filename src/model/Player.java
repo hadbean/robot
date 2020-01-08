@@ -185,32 +185,32 @@ public class Player {
 
         //如果地主是机器人，则地主要赢,如果地主是真人，则农民开天眼让地主输，让队友更好赢
         if (role == 0 && roles[role] == 1) {
-            return out(round, remainingCardNum, alreadyOutCards, outCard, playerCards);
+            return out(round, remainingCardNum, alreadyOutCards, outCard, playerCards,true);
         } else if (role != 0 && roles[0] == 0 && roles[role] == 1) {
-            return out(round, remainingCardNum, alreadyOutCards, outCard, playerCards);
+            return out(round, remainingCardNum, alreadyOutCards, outCard, playerCards,true);
         }
 
         return out(round, remainingCardNum, alreadyOutCards, outCard);
     }
 
-    public OutCard out(int round, int[] remainingCardNum, int[] alreadyOutCards, OutCard outCard, int[][] playerCards) {
+    public OutCard out(int round, int[] remainingCardNum, int[] alreadyOutCards, OutCard outCard, int[][] playerCards,boolean godView) {
 
         if (outCard != null && outCard.getRole() != role) {
-            return receive(round, remainingCardNum, alreadyOutCards, outCard, playerCards);
+            return receive(round, remainingCardNum, alreadyOutCards, outCard, playerCards,godView);
         }
 
         CardArray rs = new CardSplit().split(cards);
         rs.score();
         OutCardStrategy strategy = new OutCardStrategy(round);
         if (playerCards != null) {
-            strategy.godView = true;
+            strategy.godView = godView;
+            strategy.takeALook = true;
             strategy.playCards = playerCards;
         }
 
         //判断是否一手牌出完
         OutCard out = OutCardStrategy.oneHand(rs, remainingCardNum[role]);
         int emeryCarNum = role == 0 ? Math.min(remainingCardNum[1], remainingCardNum[2]) : remainingCardNum[0];
-
         int[] remainingCards = strategy.remainingCardsExceptMe(cards, alreadyOutCards);
 
 
@@ -218,6 +218,7 @@ public class Player {
             //在能一手出完的情况下，判断炸弹带牌是否要出
             if (out.getType() == CardType.ZHADANWITHTAIL) {
                 if (strategy.canBiggerThanMe(out.getCards(), CardType.ZHADAN, remainingCards, emeryCarNum) == 1) {
+                    out.setMode(OutCardMode.ONEHAND);
                     return out;
                 } else {
                     int l = out.getTail().length / 2;
@@ -226,22 +227,25 @@ public class Player {
                     }
                     if (role == 0) {
                         if (remainingCardNum[1] == l || remainingCardNum[0] == l) {
+                            out.setMode(OutCardMode.ONEHAND);
                             return out;
                         }
                     } else {
                         if (remainingCardNum[0] == l) {
+                            out.setMode(OutCardMode.ONEHAND);
                             return out;
                         }
                     }
                     return l == 1 ? OutCard.dan(out.getTail()[1]) : OutCard.duizi(out.getTail()[0]);
                 }
             } else {
+                out.setMode(OutCardMode.ONEHAND);
                 return out;
             }
         }
 
         //判断是否只剩下一手小牌，那么先出大牌
-        out = strategy.allBig2(role, cards, remainingCards, remainingCardNum, strategy.godView, strategy.playCards);
+        out = strategy.allBig2(role, cards, remainingCards, remainingCardNum, strategy.takeALook, strategy.playCards);
         if (out != null) {
             out.setMode(OutCardMode.ALLBIG);
             return out;
@@ -309,6 +313,10 @@ public class Player {
             return outSL;
         }
         out = strategy.smallFirst(rs, role, remainingCards, alreadyOutCards, remainingCardNum, fewHand);
+        if (out != null && out.getFitLevel() > 7){
+            System.out.println("主动让队友赢");
+            return out;
+        }
         if (out == null && outSL == null) {
             throw new RuntimeException("没法主动出牌异常");
         }
@@ -336,15 +344,16 @@ public class Player {
      * @return
      */
     public OutCard out(int round, int[] remainingCardNum, int[] alreadyOutCards, OutCard outCard) {
-        return out(round, remainingCardNum, alreadyOutCards, outCard, null);
+        return out(round, remainingCardNum, alreadyOutCards, outCard, null,false);
     }
 
 
-    public OutCard receive(int round, int[] remainingCardNum, int[] alreadyOutCards, OutCard outCard, int[][] playerCards) {
+    public OutCard receive(int round, int[] remainingCardNum, int[] alreadyOutCards, OutCard outCard, int[][] playerCards,boolean godView) {
 
         ReceiveStrategy strategy = new ReceiveStrategy(round);
         if (playerCards != null) {
-            strategy.godView = true;
+            strategy.godView = godView;
+            strategy.takeALook = true;
             strategy.playCards = playerCards;
         }
         OutCard out = strategy.oneHand(cards, remainingCardNum[role], outCard);
@@ -406,7 +415,7 @@ public class Player {
                         int result = strategy.letEnemyWin(round, role, outCard, playerCards, alreadyOutCards, remainingCardNum);
                         remainingCardNum[outCard.getRole()] -= outCard.getLength();
                         Strategy.removeCard(Strategy.EMPTY_CARDS,alreadyOutCards,outCard,true);
-                        if ((outCard.getRole() == 0 &&  result == 0) || result == 1){
+                        if (result == 1){
                             System.out.println("不接让队友赢");
                             return null;
                         }
