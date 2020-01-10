@@ -98,8 +98,8 @@ public class Player {
         Strategy.removeFrom(dipai, cards, true);
         if (score > s) {
             return score;
-        } else if (score == s) {
-            return score + 1;
+        } else if (score == s && s != 0) {
+            return Strategy.randomFloat() > 0.5?score + 1:0;
         }
 
         int[] remainingCards = strategy.remainingCardsExceptMe(cards, new int[15]);
@@ -363,15 +363,11 @@ public class Player {
         }
 
         //找到所有适合的牌
-        List<OutCard> outs = strategy.findBiggerCards(cards, remainingCardNum[role], outCard, round > 3, false);
+        List<OutCard> outs = strategy.findBiggerCards(cards, remainingCardNum[role], outCard, true, false);
         if (outs == null || outs.size() == 0) {
             return null;
         }
 
-//        int emeryCardNum = role == 0 ? Math.min(remainingCardNum[1], remainingCardNum[2]) : remainingCardNum[0];
-        if (role == 1 && outCard.getRole() == 2 && remainingCardNum[2] == 1) {
-            return strategy.letFriend(cards, outCard, Config.MIN_EXCEPT_1, outs);
-        }
         int[] remainCards = strategy.remainingCardsExceptMe(cards, alreadyOutCards);
 
         out = strategy.zhaAndWin(role, cards, remainCards, remainingCardNum, outCard);
@@ -382,7 +378,7 @@ public class Player {
         //队友只剩下一张牌，且在我下家
         // 则不用管自己的牌型，直接顶地主牌，如果是队友的牌，则手牌如果有小于9的牌，直接炸弹走起
         if (role == 1 && remainingCardNum[2] < 2) {
-            out = strategy.letFriend(cards, outCard, Config.MIN_EXCEPT_1, outs);
+            out = strategy.letFriend(cards,remainingCardNum, outCard, Config.MIN_EXCEPT_1, outs);
             if (out != null) {
                 out.setMode(OutCardMode.LETFRIEND);
                 return out;
@@ -394,8 +390,8 @@ public class Player {
             out.setMode(OutCardMode.JIEANDWIN);
             return out;
         }
-        int ememyNum = role == 0 ? Math.min(remainingCardNum[1], remainingCardNum[2]) : remainingCardNum[0];
-        if (ememyNum == 1 && outCard.getType() == CardType.DAN) {
+        int enemyNum = role == 0 ? Math.min(remainingCardNum[1], remainingCardNum[2]) : remainingCardNum[0];
+        if (enemyNum == 1 && outCard.getType() == CardType.DAN) {
             out = strategy.enemyLastOne(role, cards, outCard, remainCards, remainingCardNum, outs);
             if (out != null) {
                 out.setMode(OutCardMode.ENEMYLASTONE);
@@ -406,7 +402,8 @@ public class Player {
         if (role == 0 || out == null){
             return out;
         }else {
-            if (out.getFitLevel() < 8){ // 当接了效果一般的情况下,判断不接的情况会不会更好
+            if (out.getFitLevel() < 8){
+                // 当接了效果一般的情况下,判断不接的情况会不会更好
                 //是否要接队友的牌
                 if (role != 0 && strategy.godView) {
                     if (role == 1 ||  (role == 2 && outCard.getRole() == 1)) {

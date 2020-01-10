@@ -339,25 +339,57 @@ public class ReceiveStrategy implements Strategy {
      * @param cards
      * @return
      */
-    public OutCard letFriend(int[] cards, OutCard outCard, int minAccept, List<OutCard> biggerCards) {
+    public OutCard letFriend(int[] cards,int[] remainCardNum, OutCard outCard, int minAccept, List<OutCard> biggerCards) {
         //如果是队友的牌，我如果有炸弹或者飞机，且手牌有小于10的，则强势加分
 
-        OutCard biggest = Strategy.findZhanDanOrHuoJian(cards, outCard);
-        if (biggest != null) {
-            Strategy.removeCard(cards, EMPTY_CARDS, biggest, true);
-            for (int i = 0; i < minAccept; i++) {
-                if (cards[i] > 0) {
-                    Strategy.removeCard(cards, EMPTY_CARDS, biggest, false);
+        if (godView){
+            int minCard = -1;
+            for (int i =0;i < playCards[2].length; i++) {
+                if (playCards[2][i] == 1){
+                    minCard = i;
+                    break;
+                }
+            }
+            boolean smallerCard = false;
+            for (int i = 0; i < minCard; i++) {
+                if (cards[i] > 0 && cards[i]  < 4){
+                    smallerCard = true;
+                    break;
+                }
+            }
+            if (!smallerCard){
+                return null;
+            }
+            OutCard biggest = Strategy.findZhanDanOrHuoJian(cards, outCard);
+            if (biggest != null){
+                if (biggestProbability(1,playCards,remainCardNum,biggest) ==  1){
                     return biggest;
                 }
             }
-            Strategy.removeCard(cards, EMPTY_CARDS, biggest, false);
-        }
-        if (outCard.getRole() == 2) {
-            return null;
-        } else {
-            return biggerCards.get(biggerCards.size() - 1);
 
+            if (outCard.getRole() == 2 || (outCard.getRole() == 0 && outCard.getType() == CardType.DAN && outCard.getCards()[0] != minCard)){
+                return null;
+            }
+
+            return biggerCards.get(biggerCards.size() - 1);
+        } else {
+            OutCard biggest = Strategy.findZhanDanOrHuoJian(cards, outCard);
+            if (biggest != null) {
+                Strategy.removeCard(cards, EMPTY_CARDS, biggest, true);
+                for (int i = 0; i < minAccept; i++) {
+                    if (cards[i] > 0) {
+                        Strategy.removeCard(cards, EMPTY_CARDS, biggest, false);
+                        return biggest;
+                    }
+                }
+                Strategy.removeCard(cards, EMPTY_CARDS, biggest, false);
+            }
+            if (outCard.getRole() == 2) {
+                return null;
+            } else {
+                return biggerCards.get(biggerCards.size() - 1);
+
+            }
         }
     }
 

@@ -106,7 +106,7 @@ public class CardSplit {
         n = 1;
         m = 0;
         index = 0;
-        for (int i = 0; i < length - 4; i++) {
+        for (int i = 0; i < length - 3; i++) {
             if (cards[i] >= 2 && cards[i + 1] >= 2) {
                 n++;
                 index = i + 1;

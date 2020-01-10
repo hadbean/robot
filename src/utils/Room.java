@@ -58,7 +58,7 @@ public class Room {
         int s = 0;
         int who = 0;
         for (int i = 0; i < 3; i++) {
-            int s2 = players[round % 3].jiaoDiZhu(s,dp);
+            int s2 = players[round % 3].jiaoDiZhu(s);
             if (s2 > s){
                 s = s2;
                 who = round % 3;
@@ -124,36 +124,37 @@ public class Room {
         }
         return true;
     }
-
-    public int play(boolean debug) {
-        int[] roles = new int[]{0,1,1};
+    public int play(OutCard out,int round, boolean debug){
+        int[] roles = new int[]{1,0,0};
         CardSplit split = new CardSplit();
-        OutCard outCard = null;
-        int round = 0;
+        OutCard outCard = out;
+        round = round;
         int[][] playerCards = new int[3][];
         playerCards[0] = players[0].getCards();
         playerCards[1] = players[1].getCards();
         playerCards[2] = players[2].getCards();
         String cardStr = cardDesc(players[0], null) + "\n" + cardDesc(players[1], null) + "\n" + cardDesc(players[2], null) + "\n";
+        Player p = players[round % 3];
+        CardArray rss = split.split(p.getCards());
+        int score = rss.score();
+        int hands = rss.hands;
+        int maxNum = rss.maxCardNum();
+
         try {
-            Player p = players[round % 3];
-            CardArray rss = split.split(p.getCards());
-            int score = rss.score();
-            int hands = rss.hands;
-            int maxNum = rss.maxCardNum();
+            if (outCard == null) {
 
-            outCard = p.out(round / 3, remainingCardNum, alreadyOutCards, outCard,playerCards,roles);
-            if (outCard.getType() == CardType.ZHADAN){
-                throw new RuntimeException("出牌混乱");
+                outCard = p.out(round / 3, remainingCardNum, alreadyOutCards, outCard, playerCards, roles);
+                if (outCard.getType() == CardType.ZHADAN) {
+                    throw new RuntimeException("出牌混乱");
+                }
+                System.out.println(cardDesc(p, outCard));
+                Strategy.removeCard(p.getCards(), alreadyOutCards, outCard, true);
+                remainingCardNum[p.getRole()] -= outCard.getLength();
+                round++;
+                if (isOver(p.getCards())) {
+                    return p.getRole();
+                }
             }
-            System.out.println(cardDesc(p, outCard));
-            Strategy.removeCard(p.getCards(), alreadyOutCards, outCard, true);
-            remainingCardNum[p.getRole()] -= outCard.getLength();
-            round++;
-            if (isOver(p.getCards())){
-                return p.getRole();
-            }
-
 
             while (true) {
                 p = players[round % 3];
@@ -227,7 +228,9 @@ public class Room {
             System.out.println(cardStr);
             throw e;
         }
-
+    }
+    public int play(boolean debug) {
+        return play(null,0,debug);
     }
 
     public String cardDesc(Player p, OutCard out) {

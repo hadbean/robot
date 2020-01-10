@@ -34,9 +34,12 @@ public class PlayTest {
 //                "主下:Q,2,2,\tDUI:9,9 \t实际出牌：9,9\n" +
 //                "主上:9,9,2,\tDUI:A,A \t实际出牌：A,A";
 
-        String s = "地主:3,4,4,4,4,5,6,8,8,10,10,10,J,Q,K,K,2,2,2,2,\tPASS\n" +
-                "主下:3,5,7,7,9,9,10,J,Q,Q,K,K,A,A,A,JOKER1,JOKER2,\tPASS\n" +
-                "主上:3,3,5,5,6,6,6,7,7,8,8,9,9,J,J,Q,A,\tPASS";
+        String s = "地主:3,4,4,5,5,6,6,7,8,9,9,10,10,10,J,J,J,K,A,A,\t<smallAndLongFirst>LIANDUI:4,4,5,5,6,6, \n" +
+                "0准备出牌：主下:3,3,3,4,6,7,8,9,9,J,Q,Q,K,A,2,JOKER1,JOKER2,\tPASS\t实际出牌：PASS\n" +
+                "0准备出牌：主上:4,5,5,6,7,7,8,8,10,Q,Q,K,K,A,2,2,2,\tPASS\t实际出牌：PASS";
+//        OutCard out = OutCard.dan(8);
+//        out.setRole(2);
+        OutCard out = null;
         String[] ss = s.split("\n");
         if (ss.length == 3) {
             for (int i = 0; i < s.split("\n").length; i++) {
@@ -65,7 +68,7 @@ public class PlayTest {
 
         Room r = new Room();
         r.init(alreadyOutCard,remainingCardNum,p,p1,p2);
-        r.play(false);
+        r.play(out,0,false);
 //        OutCard out =
 
 

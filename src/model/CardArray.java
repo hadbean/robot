@@ -114,6 +114,26 @@ public class CardArray {
 
     public int maxCardNum() {
         int maxCard = nHuojian * 2 + nZhadan + nEr;
+        if (nZhadan > 0 && cards[12] == 4){
+            maxCard += 4;
+        }
+
+        if (nHuojian == 0) {
+            maxCard += cards[13];
+            maxCard += cards[14];
+        }
+        if (cards[12] == 1) {
+            maxCard += 1;
+        }
+        maxCard += cards[11] / 2;
+        return maxCard;
+    }
+
+    public int smallCardNum(int[][] playerCards,int role) {
+        int maxCard = nHuojian * 2 + nZhadan + nEr;
+        if (nZhadan > 0 && cards[12] == 4){
+            maxCard += 4;
+        }
 
         if (nHuojian == 0) {
             maxCard += cards[13];
